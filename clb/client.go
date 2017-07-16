@@ -36,12 +36,12 @@ type Client struct {
 }
 
 type Opts struct {
-	Method string
-	Region string
-	Host   string
-	Path   string
+	Method          string
+	Region          string
+	Host            string
+	Path            string
 	SignatureMethod string
-	Schema string
+	Schema          string
 }
 
 type Credential struct {
@@ -99,8 +99,8 @@ func (client *Client) initCommonArgs(args *url.Values) {
 }
 
 func (client *Client) signGetRequest(values *url.Values) string {
-	keys := make([]string, 0)
-	for k, _ := range *values{
+	keys := make([]string, 0, len(*values))
+	for k := range *values {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
@@ -119,7 +119,6 @@ func (client *Client) signGetRequest(values *url.Values) string {
 
 	return b64Encoded
 }
-
 
 func (client *Client) InvokeWithGET(action string, args interface{}, response interface{}) error {
 	reqValues := url.Values{}
@@ -141,22 +140,35 @@ func (client *Client) InvokeWithGET(action string, args interface{}, response in
 	)
 
 	if err != nil {
-		return err
+		return makeClientError(err)
 	}
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return err
+		return makeClientError(err)
 	}
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return err
+		return makeClientError(err)
+	}
+
+	errorResponse := ErrorResponse{}
+
+	if err = json.Unmarshal(body, &errorResponse); err != nil {
+		return makeClientError(err)
+	}
+
+	if (errorResponse.Code != NoErr) || (errorResponse.CodeDesc != "" && errorResponse.CodeDesc != NoErrCodeDesc) {
+		return Error{
+			ErrorResponse: errorResponse,
+			StatusCode:    resp.StatusCode,
+		}
 	}
 
 	if err = json.Unmarshal(body, response); err != nil {
-		return err
+		return makeClientError(err)
 	}
 
 	return nil
@@ -165,4 +177,3 @@ func (client *Client) InvokeWithGET(action string, args interface{}, response in
 func (client *Client) InvokeWithPOST(action string, args interface{}, response interface{}) error {
 	return nil
 }
-

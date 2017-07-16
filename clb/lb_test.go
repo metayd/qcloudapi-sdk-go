@@ -1,10 +1,10 @@
 package clb
 
 import (
+	"fmt"
 	"math/rand"
 	"testing"
 	"time"
-	"fmt"
 )
 
 func TestLoadBalancer(t *testing.T) {
@@ -46,7 +46,7 @@ func TestLoadBalancer(t *testing.T) {
 	newName := fmt.Sprintf("test-lb-v-%d", rand.Int())
 
 	modifyArgs := ModifyLoadBalancerAttributesArgs{
-		LoadBalancerId: lbId[0],
+		LoadBalancerId:   lbId[0],
 		LoadBalancerName: newName,
 	}
 
@@ -54,7 +54,6 @@ func TestLoadBalancer(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
 
 	requestId := modifyResponse.RequestId
 
@@ -68,21 +67,19 @@ func TestLoadBalancer(t *testing.T) {
 			t.Fatal(err)
 		}
 
-
 		if describeTaskResponse.Data.Status == 0 {
 			break
 		}
 	}
 
 	deleteArgs := DeleteLoadBalancersArgs{
-		LoadBalancerIds:[]string{lbId[0]},
+		LoadBalancerIds: []string{lbId[0]},
 	}
 
 	deleteResponse, err := client.DeleteLoadBalancers(&deleteArgs)
 	if err != nil {
 		t.Fatal(err)
 	}
-
 
 	deleteRequestId := deleteResponse.RequestId
 

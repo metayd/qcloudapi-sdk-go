@@ -43,31 +43,36 @@ func encodeStructWithPrefix(prefix string, val reflect.Value, v *url.Values) err
 		}
 	case reflect.Ptr:
 		encodeStructWithPrefix(prefix, val.Elem(), v)
-	case reflect.String: {
-		if !(val.Len() == 0) {
-			v.Set(strings.TrimLeft(prefix, "."), val.String())
+	case reflect.String:
+		{
+			if !(val.Len() == 0) {
+				v.Set(strings.TrimLeft(prefix, "."), val.String())
+			}
 		}
-	}
-	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:{
-		if !(val.Int() == 0) {
-			v.Set(strings.TrimLeft(prefix, "."), fmt.Sprint(val))
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		{
+			if !(val.Int() == 0) {
+				v.Set(strings.TrimLeft(prefix, "."), fmt.Sprint(val))
+			}
 		}
-	}
-	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:{
-		if !(val.Uint() == 0) {
-			v.Set(strings.TrimLeft(prefix, "."), fmt.Sprint(val))
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
+		{
+			if !(val.Uint() == 0) {
+				v.Set(strings.TrimLeft(prefix, "."), fmt.Sprint(val))
+			}
 		}
-	}
-	case reflect.Float32, reflect.Float64:{
-		if !(val.Float() == 0) {
-			v.Set(strings.TrimLeft(prefix, "."), fmt.Sprint(val))
+	case reflect.Float32, reflect.Float64:
+		{
+			if !(val.Float() == 0) {
+				v.Set(strings.TrimLeft(prefix, "."), fmt.Sprint(val))
+			}
 		}
-	}
-	case reflect.Bool:{
-		if !val.Bool() {
-			v.Set(strings.TrimLeft(prefix, "."), fmt.Sprint(val))
+	case reflect.Bool:
+		{
+			if !val.Bool() {
+				v.Set(strings.TrimLeft(prefix, "."), fmt.Sprint(val))
+			}
 		}
-	}
 	default:
 	}
 	return nil
