@@ -2,6 +2,7 @@ package clb
 
 import (
 	"fmt"
+	"context"
 	"math/rand"
 	"testing"
 	"time"
@@ -57,20 +58,17 @@ func TestLoadBalancer(t *testing.T) {
 
 	requestId := modifyResponse.RequestId
 
-	for {
-		time.Sleep(time.Second * 1)
-		describeTaskArgs := DescribeLoadBalancersTaskResultArgs{
-			RequestId: requestId,
-		}
-		describeTaskResponse, err := client.DescribeLoadBalancersTaskResult(&describeTaskArgs)
-		if err != nil {
-			t.Fatal(err)
-		}
+	task := NewTask(requestId)
 
-		if describeTaskResponse.Data.Status == 0 {
-			break
-		}
+	result, err := task.WaitUntilDone(context.Background(), client)
+	if err != nil {
+		t.Fatal(err)
 	}
+
+	if result != TaskSuccceed {
+		t.Fatalf("requestId %s failed", requestId)
+	}
+
 
 	deleteArgs := DeleteLoadBalancersArgs{
 		LoadBalancerIds: []string{lbId[0]},
@@ -83,19 +81,15 @@ func TestLoadBalancer(t *testing.T) {
 
 	deleteRequestId := deleteResponse.RequestId
 
-	for {
-		time.Sleep(time.Second * 1)
-		describeTaskArgs := DescribeLoadBalancersTaskResultArgs{
-			RequestId: deleteRequestId,
-		}
-		describeTaskResponse, err := client.DescribeLoadBalancersTaskResult(&describeTaskArgs)
-		if err != nil {
-			t.Fatal(err)
-		}
+	task = NewTask(deleteRequestId)
 
-		if describeTaskResponse.Data.Status == 0 {
-			break
-		}
+	result, err = task.WaitUntilDone(context.Background(), client)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if result != TaskSuccceed {
+		t.Fatalf("requestId %s failed", requestId)
 	}
 
 }
