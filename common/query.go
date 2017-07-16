@@ -1,26 +1,10 @@
-package types
+package common
 
 import (
 	"fmt"
 	"net/url"
 	"reflect"
 )
-
-type ApiResponse struct {
-	Code    int    `json:"code"`
-	Message string `json:"message, omitempty"`
-}
-
-type CommonArgs struct {
-	Action          string
-	Region          string
-	Timestamp       uint
-	Nonce           uint
-	SecretId        string
-	SignatureMethod string
-}
-
-type RequestSignature string
 
 func EncodeArgs(key string, i interface{}, v *url.Values) error {
 	val := reflect.ValueOf(i)
@@ -59,6 +43,4 @@ func EncodeArgs(key string, i interface{}, v *url.Values) error {
 	return nil
 }
 
-func EncodeFlattenStruct(key string, i interface{}, v *url.Values) error {
-	return nil
-}
+
