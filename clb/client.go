@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"math/rand"
 	"net/http"
 	"net/url"
@@ -149,10 +150,15 @@ func (client *Client) InvokeWithGET(action string, args interface{}, response in
 	}
 	defer resp.Body.Close()
 
-	dec := json.NewDecoder(resp.Body)
-	if err = dec.Decode(response); err != nil {
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
 		return err
 	}
+
+	if err = json.Unmarshal(body, response); err != nil {
+		return err
+	}
+
 	return nil
 }
 
