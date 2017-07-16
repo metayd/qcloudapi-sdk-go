@@ -50,6 +50,21 @@ type Credential struct {
 }
 
 func NewClient(credential Credential, opts Opts) (*Client, error) {
+	if opts.Method == "" {
+		opts.Method = RequestMethodGET
+	}
+	if opts.Host == "" {
+		opts.Host = CLBHost
+	}
+	if opts.Path == "" {
+		opts.Path = CLBPath
+	}
+	if opts.SignatureMethod == "" {
+		opts.SignatureMethod = SignatureMethodHMacSha256
+	}
+	if opts.Schema == "" {
+		opts.Schema = "https"
+	}
 	return &Client{
 		&http.Client{},
 		credential,
