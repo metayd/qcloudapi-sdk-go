@@ -1,11 +1,5 @@
 package clb
 
-import (
-	"net/url"
-
-	"github.com/dbdd4us/qcloudapi-sdk-go/common"
-)
-
 type DescribeLoadBalancersArgs struct {
 	LoadBalancerIds  LoadBalancerIds  `url:"loadBalancerIds,omitempty"`
 	LoadBalancerType int              `url:"loadBalancerType,omitempty"`
@@ -25,21 +19,9 @@ type DescribeLoadBalancersArgs struct {
 
 type LoadBalancerIds []string
 
-func (field LoadBalancerIds) EncodeValues(key string, v *url.Values) error {
-	return common.EncodeArgs(key, field, v)
-}
-
 type LoadBalancerVips []string
 
-func (field LoadBalancerVips) EncodeValues(key string, v *url.Values) error {
-	return common.EncodeArgs(key, field, v)
-}
-
 type BackendWanIps []string
-
-func (field BackendWanIps) EncodeValues(key string, v *url.Values) error {
-	return common.EncodeArgs(key, field, v)
-}
 
 type DescribeLoadBalancersResponse struct {
 	Code            int            `json:"code"`

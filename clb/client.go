@@ -6,7 +6,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"math/rand"
 	"net/http"
 	"net/url"
@@ -15,7 +14,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/google/go-querystring/query"
+	"github.com/dbdd4us/qcloudapi-sdk-go/common"
 )
 
 const (
@@ -122,7 +121,8 @@ func (client *Client) signGetRequest(values *url.Values) string {
 
 
 func (client *Client) InvokeWithGET(action string, args interface{}, response interface{}) error {
-	reqValues, err := query.Values(args)
+	reqValues := url.Values{}
+	err := common.EncodeStruct(args, &reqValues)
 	if err != nil {
 		return err
 	}
@@ -142,20 +142,16 @@ func (client *Client) InvokeWithGET(action string, args interface{}, response in
 	if err != nil {
 		return err
 	}
+
 	resp, err := client.Do(req)
 	if err != nil {
 		return err
 	}
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
+	dec := json.NewDecoder(resp.Body)
+	if err = dec.Decode(response); err != nil {
 		return err
-	}
-
-	err = json.Unmarshal(body, response)
-	if err != nil {
-		return nil
 	}
 	return nil
 }

@@ -12,6 +12,7 @@ func TestDescribeLoadBalancers(t *testing.T) {
 
 	args := DescribeLoadBalancersArgs{
 		LoadBalancerType: 3,
+		//LoadBalancerIds: LoadBalancerIds{"i-1", "i-2",},
 	}
 
 	loadBalancers, err := client.DescribeLoadBalancers(&args)
