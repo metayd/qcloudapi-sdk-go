@@ -17,7 +17,7 @@ func TestLoadBalancer(t *testing.T) {
 	loadBalancerType := 3
 
 	createArgs := CreateLoadBalancerArgs{
-		LoadBalancerType: &loadBalancerType,
+		LoadBalancerType: loadBalancerType,
 	}
 
 	createResponse, err := client.CreateLoadBalancer(&createArgs)
@@ -49,7 +49,7 @@ func TestLoadBalancer(t *testing.T) {
 	newName := fmt.Sprintf("test-lb-v-%d", rand.Int())
 
 	modifyArgs := ModifyLoadBalancerAttributesArgs{
-		LoadBalancerId:   &lbId[0],
+		LoadBalancerId:   lbId[0],
 		LoadBalancerName: &newName,
 	}
 
@@ -72,7 +72,7 @@ func TestLoadBalancer(t *testing.T) {
 	}
 
 	deleteArgs := DeleteLoadBalancersArgs{
-		LoadBalancerIds: &[]string{lbId[0]},
+		LoadBalancerIds: []string{lbId[0]},
 	}
 
 	deleteResponse, err := client.DeleteLoadBalancers(&deleteArgs)

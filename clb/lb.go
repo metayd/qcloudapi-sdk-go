@@ -48,7 +48,7 @@ func (client *Client) DescribeLoadBalancers(args *DescribeLoadBalancersArgs) (*D
 }
 
 type InquiryLBPriceArgs struct {
-	LoadBalancerType *int `qcloud_arg:"loadBalancerType,required"`
+	LoadBalancerType int `qcloud_arg:"loadBalancerType,required"`
 }
 
 type InquiryLBPriceResponse struct {
@@ -66,7 +66,7 @@ func (client *Client) InquiryLBPrice(args *InquiryLBPriceArgs) (*InquiryLBPriceR
 }
 
 type CreateLoadBalancerArgs struct {
-	LoadBalancerType *int    `qcloud_arg:"loadBalancerType,required"`
+	LoadBalancerType int     `qcloud_arg:"loadBalancerType,required"`
 	Forward          *int    `qcloud_arg:"forward"`
 	LoadBalancerName *string `qcloud_arg:"loadBalancerName"`
 	DomainPrefix     *string `qcloud_arg:"domainPrefix"`
@@ -92,7 +92,7 @@ func (client *Client) CreateLoadBalancer(args *CreateLoadBalancerArgs) (*CreateL
 }
 
 type ModifyLoadBalancerAttributesArgs struct {
-	LoadBalancerId   *string `qcloud_arg:"loadBalancerId,required"`
+	LoadBalancerId   string  `qcloud_arg:"loadBalancerId,required"`
 	LoadBalancerName *string `qcloud_arg:"loadBalancerName"`
 	DomainPrefix     *string `qcloud_arg:"domainPrefix"`
 }
@@ -112,7 +112,7 @@ func (client *Client) ModifyLoadBalancerAttributes(args *ModifyLoadBalancerAttri
 }
 
 type DeleteLoadBalancersArgs struct {
-	LoadBalancerIds *[]string `qcloud_arg:"loadBalancerIds,required"`
+	LoadBalancerIds []string `qcloud_arg:"loadBalancerIds,required"`
 }
 
 type DeleteLoadBalancersResponse struct {
@@ -130,7 +130,7 @@ func (client *Client) DeleteLoadBalancers(args *DeleteLoadBalancersArgs) (*Delet
 }
 
 type DescribeLoadBalancersTaskResultArgs struct {
-	RequestId *int `qcloud_arg:"requestId,required"`
+	RequestId int `qcloud_arg:"requestId,required"`
 }
 
 type DescribeLoadBalancersTaskResultResponse struct {

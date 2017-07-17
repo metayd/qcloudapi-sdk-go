@@ -12,7 +12,7 @@ const (
 )
 
 type DescribeInstancesArgs struct {
-	Version     *string   `qcloud_arg:"Version,required"`
+	Version     string    `qcloud_arg:"Version,required"`
 	InstanceIds *[]string `qcloud_arg:"InstanceIds"`
 	Filters     *[]Filter `qcloud_arg:"Filters"`
 	Offset      *int      `qcloud_arg:"Offset"`
