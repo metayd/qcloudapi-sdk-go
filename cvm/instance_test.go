@@ -13,7 +13,7 @@ func TestDescribeProject(t *testing.T) {
 	version := "2017-03-12"
 
 	args := DescribeInstancesArgs{
-		Version: &version,
+		Version: version,
 	}
 
 	response, err := client.DescribeInstances(&args)
