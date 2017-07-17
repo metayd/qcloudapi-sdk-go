@@ -18,14 +18,15 @@ import (
 	"log"
 
 	"github.com/dbdd4us/qcloudapi-sdk-go/clb"
+	"github.com/dbdd4us/qcloudapi-sdk-go/common"
 )
 
 func main() {
-	credential := clb.Credential{
+	credential := common.Credential{
 		SecretId: "YOUR_SECRET_ID",
 		SecretKey: "YOUR_SECRET_KEY",
 	}
-	opts := clb.Opts{
+	opts := common.Opts{
 		Region: "gz",
 	}
 	client, err := clb.NewClient(credential, opts)
