@@ -9,8 +9,8 @@ const (
 	TaskCheckInterval = time.Second * 1
 
 	TaskSuccceed = 0
-	TaskFailed = 1
-	TaskRunning = 2
+	TaskFailed   = 1
+	TaskRunning  = 2
 
 	TaskStatusUnknown = 9
 )
@@ -31,9 +31,9 @@ func (task *Task) WaitUntilDone(ctx context.Context, client *Client) (int, error
 		select {
 		case <-ctx.Done():
 			return TaskStatusUnknown, ctx.Err()
-		case <- ticker.C:
+		case <-ticker.C:
 			args := DescribeLoadBalancersTaskResultArgs{
-				RequestId: task.requestId,
+				RequestId: &task.requestId,
 			}
 			response, err := client.DescribeLoadBalancersTaskResult(&args)
 			if err != nil {

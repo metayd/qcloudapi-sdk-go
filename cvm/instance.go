@@ -12,16 +12,16 @@ const (
 )
 
 type DescribeInstancesArgs struct {
-	Version     string   `url:"Version"`
-	InstanceIds []string `url:"InstanceIds"`
-	Filters     []Filter `url:"Filters"`
-	Offset      int      `url:"Offset"`
-	Limit       int      `url:"Limit"`
+	Version     *string   `qcloud_arg:"Version,required"`
+	InstanceIds *[]string `qcloud_arg:"InstanceIds"`
+	Filters     *[]Filter `qcloud_arg:"Filters"`
+	Offset      *int      `qcloud_arg:"Offset"`
+	Limit       *int      `qcloud_arg:"Limit"`
 }
 
 type Filter struct {
-	Name   string        `url:"Name"`
-	Values []interface{} `url:"Values"`
+	Name   string        `qcloud_arg:"Name"`
+	Values []interface{} `qcloud_arg:"Values"`
 }
 
 type DescribeInstancesResponse struct {

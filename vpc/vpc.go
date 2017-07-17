@@ -6,12 +6,12 @@ type Response struct {
 }
 
 type DescribeVpcExArgs struct {
-	VpcId          string `url:"vpcId"`
-	VpcName        string `url:"vpcName"`
-	Offset         int    `url:"offset"`
-	Limit          int    `url:"limit"`
-	OrderField     string `url:"orderField"`
-	OrderDirection string `url:"orderDirection"`
+	VpcId          *string `qcloud_arg:"vpcId"`
+	VpcName        *string `qcloud_arg:"vpcName"`
+	Offset         *int    `qcloud_arg:"offset"`
+	Limit          *int    `qcloud_arg:"limit"`
+	OrderField     *string `qcloud_arg:"orderField"`
+	OrderDirection *string `qcloud_arg:"orderDirection"`
 }
 
 type DescribeVpcExResponse struct {
