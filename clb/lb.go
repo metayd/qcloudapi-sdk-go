@@ -1,20 +1,20 @@
 package clb
 
 type DescribeLoadBalancersArgs struct {
-	LoadBalancerIds  []string `url:"loadBalancerIds,omitempty"`
-	LoadBalancerType int      `url:"loadBalancerType,omitempty"`
-	LoadBalancerName string   `url:"loadBalancerName,omitempty"`
-	Domain           string   `url:"domain,omitempty"`
-	LoadBalancerVips []string `url:"loadBalancerVips,omitempty"`
-	BackendWanIps    []string `url:"backendWanIps,omitempty"`
-	Offset           int      `url:"offset,omitempty"`
-	Limit            int      `url:"limit,omitempty"`
-	OrderBy          string   `url:"orderBy,omitempty"`
-	OrderType        int      `url:"orderType,omitempty"`
-	SearchKey        string   `url:"searchKey,omitempty"`
-	ProjectId        int      `url:"projectId,omitempty"`
-	Forward          int      `url:"forward,omitempty"`
-	WithRs           int      `url:"withRs,omitempty"`
+	LoadBalancerIds  *[]string `qcloud_arg:"loadBalancerIds"`
+	LoadBalancerType *int      `qcloud_arg:"loadBalancerType"`
+	LoadBalancerName *string   `qcloud_arg:"loadBalancerName"`
+	Domain           *string   `qcloud_arg:"domain"`
+	LoadBalancerVips *[]string `qcloud_arg:"loadBalancerVips"`
+	BackendWanIps    *[]string `qcloud_arg:"backendWanIps"`
+	Offset           *int      `qcloud_arg:"offset"`
+	Limit            *int      `qcloud_arg:"limit"`
+	OrderBy          *string   `qcloud_arg:"orderBy"`
+	OrderType        *int      `qcloud_arg:"orderType"`
+	SearchKey        *string   `qcloud_arg:"searchKey"`
+	ProjectId        *int      `qcloud_arg:"projectId"`
+	Forward          *int      `qcloud_arg:"forward"`
+	WithRs           *int      `qcloud_arg:"withRs"`
 }
 
 type DescribeLoadBalancersResponse struct {
@@ -48,7 +48,7 @@ func (client *Client) DescribeLoadBalancers(args *DescribeLoadBalancersArgs) (*D
 }
 
 type InquiryLBPriceArgs struct {
-	LoadBalancerType int `url:"loadBalancerType"`
+	LoadBalancerType *int `qcloud_arg:"loadBalancerType,required"`
 }
 
 type InquiryLBPriceResponse struct {
@@ -66,14 +66,14 @@ func (client *Client) InquiryLBPrice(args *InquiryLBPriceArgs) (*InquiryLBPriceR
 }
 
 type CreateLoadBalancerArgs struct {
-	LoadBalancerType int    `url:"loadBalancerType"`
-	Forward          int    `url:"forward"`
-	LoadBalancerName string `url:"loadBalancerName"`
-	DomainPrefix     string `url:"domainPrefix"`
-	VpcId            string `url:"vpcId"`
-	SubnetId         string `url:"subnetId"`
-	ProjectId        int    `url:"projectId"`
-	Number           int    `url:"number"`
+	LoadBalancerType *int    `qcloud_arg:"loadBalancerType,required"`
+	Forward          *int    `qcloud_arg:"forward"`
+	LoadBalancerName *string `qcloud_arg:"loadBalancerName"`
+	DomainPrefix     *string `qcloud_arg:"domainPrefix"`
+	VpcId            *string `qcloud_arg:"vpcId"`
+	SubnetId         *string `qcloud_arg:"subnetId"`
+	ProjectId        *int    `qcloud_arg:"projectId"`
+	Number           *int    `qcloud_arg:"number"`
 }
 
 type CreateLoadBalancerResponse struct {
@@ -92,9 +92,9 @@ func (client *Client) CreateLoadBalancer(args *CreateLoadBalancerArgs) (*CreateL
 }
 
 type ModifyLoadBalancerAttributesArgs struct {
-	LoadBalancerId   string `url:"loadBalancerId"`
-	LoadBalancerName string `url:"loadBalancerName"`
-	DomainPrefix     string `url:"domainPrefix"`
+	LoadBalancerId   *string `qcloud_arg:"loadBalancerId,required"`
+	LoadBalancerName *string `qcloud_arg:"loadBalancerName"`
+	DomainPrefix     *string `qcloud_arg:"domainPrefix"`
 }
 
 type ModifyLoadBalancerAttributesResponse struct {
@@ -112,7 +112,7 @@ func (client *Client) ModifyLoadBalancerAttributes(args *ModifyLoadBalancerAttri
 }
 
 type DeleteLoadBalancersArgs struct {
-	LoadBalancerIds []string `url:"loadBalancerIds"`
+	LoadBalancerIds *[]string `qcloud_arg:"loadBalancerIds,required"`
 }
 
 type DeleteLoadBalancersResponse struct {
@@ -130,7 +130,7 @@ func (client *Client) DeleteLoadBalancers(args *DeleteLoadBalancersArgs) (*Delet
 }
 
 type DescribeLoadBalancersTaskResultArgs struct {
-	RequestId int `url:"requestId"`
+	RequestId *int `qcloud_arg:"requestId,required"`
 }
 
 type DescribeLoadBalancersTaskResultResponse struct {

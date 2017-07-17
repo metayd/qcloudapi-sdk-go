@@ -9,8 +9,11 @@ func TestDescribeProject(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	version := "2017-03-12"
+
 	args := DescribeInstancesArgs{
-		Version:"2017-03-12",
+		Version: &version,
 	}
 
 	response, err := client.DescribeInstances(&args)

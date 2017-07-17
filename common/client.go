@@ -103,7 +103,7 @@ func (client *Client) InvokeWithGET(action string, args interface{}, response in
 	reqValues := url.Values{}
 	err := EncodeStruct(args, &reqValues)
 	if err != nil {
-		return err
+		return makeClientError(err)
 	}
 	reqValues.Set("Action", action)
 	client.initCommonArgs(&reqValues)

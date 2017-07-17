@@ -1,8 +1,8 @@
 package clb
 
 import (
-	"fmt"
 	"context"
+	"fmt"
 	"math/rand"
 	"testing"
 	"time"
@@ -14,8 +14,10 @@ func TestLoadBalancer(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	loadBalancerType := 3
+
 	createArgs := CreateLoadBalancerArgs{
-		LoadBalancerType: 3,
+		LoadBalancerType: &loadBalancerType,
 	}
 
 	createResponse, err := client.CreateLoadBalancer(&createArgs)
@@ -30,7 +32,7 @@ func TestLoadBalancer(t *testing.T) {
 	}
 
 	describeArgs := DescribeLoadBalancersArgs{
-		LoadBalancerIds: []string{lbId[0]},
+		LoadBalancerIds: &[]string{lbId[0]},
 	}
 
 	for {
@@ -47,8 +49,8 @@ func TestLoadBalancer(t *testing.T) {
 	newName := fmt.Sprintf("test-lb-v-%d", rand.Int())
 
 	modifyArgs := ModifyLoadBalancerAttributesArgs{
-		LoadBalancerId:   lbId[0],
-		LoadBalancerName: newName,
+		LoadBalancerId:   &lbId[0],
+		LoadBalancerName: &newName,
 	}
 
 	modifyResponse, err := client.ModifyLoadBalancerAttributes(&modifyArgs)
@@ -69,9 +71,8 @@ func TestLoadBalancer(t *testing.T) {
 		t.Fatalf("requestId %s failed", requestId)
 	}
 
-
 	deleteArgs := DeleteLoadBalancersArgs{
-		LoadBalancerIds: []string{lbId[0]},
+		LoadBalancerIds: &[]string{lbId[0]},
 	}
 
 	deleteResponse, err := client.DeleteLoadBalancers(&deleteArgs)
