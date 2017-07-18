@@ -13,6 +13,8 @@ import (
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -36,6 +38,8 @@ type Opts struct {
 	Path            string
 	SignatureMethod string
 	Schema          string
+
+	Logger *logrus.Logger
 }
 
 type Credential struct {
@@ -52,6 +56,9 @@ func NewClient(credential Credential, opts Opts) (*Client, error) {
 	}
 	if opts.Schema == "" {
 		opts.Schema = "https"
+	}
+	if opts.Logger == nil {
+		opts.Logger = logrus.New()
 	}
 	return &Client{
 		&http.Client{},
@@ -126,12 +133,17 @@ func (client *Client) InvokeWithGET(action string, args interface{}, response in
 	if err != nil {
 		return makeClientError(err)
 	}
+
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return makeClientError(err)
 	}
+
+	client.opts.Logger.WithField("Action", action).Debugf(
+		"%s %s %d %s", "GET", req.URL, resp.StatusCode, body,
+	)
 
 	errorResponse := ErrorResponse{}
 
@@ -140,10 +152,14 @@ func (client *Client) InvokeWithGET(action string, args interface{}, response in
 	}
 
 	if (errorResponse.Code != NoErr) || (errorResponse.CodeDesc != "" && errorResponse.CodeDesc != NoErrCodeDesc) {
-		return Error{
+		err = Error{
 			ErrorResponse: errorResponse,
 			StatusCode:    resp.StatusCode,
 		}
+		client.opts.Logger.WithField("Action", action).Errorf(
+			"%s %s %d %s %v", "GET", req.URL, resp.StatusCode, body, err,
+		)
+		return err
 	}
 
 	if err = json.Unmarshal(body, response); err != nil {
