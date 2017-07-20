@@ -1,9 +1,5 @@
 package common
 
-import (
-	"fmt"
-)
-
 const (
 	NoErr         = 0
 	NoErrCodeDesc = "Success"
@@ -11,32 +7,41 @@ const (
 	ErrQCloudGoClient = 9999
 )
 
-type Error struct {
-	ErrorResponse ErrorResponse
-	StatusCode    int
-}
-
-type ErrorResponse struct {
+type LegacyAPIError struct {
 	Code     int    `json:"code"`
 	Message  string `json:"message"`
 	CodeDesc string `json:"codeDesc"`
 }
 
-func (err Error) Error() string {
-	return fmt.Sprintf(
-		"QCloud API Error: HTTP Status Code: %d, Response Code: %d, Message: %s",
-		err.StatusCode,
-		err.ErrorResponse.Code,
-		err.ErrorResponse.Message,
-	)
+func (lae LegacyAPIError) Error() string {
+	return lae.Message
 }
 
-func makeClientError(err error) Error {
-	return Error{
-		ErrorResponse: ErrorResponse{
-			Code:    ErrQCloudGoClient,
-			Message: err.Error(),
-		},
-		StatusCode: -1,
+type VersionAPIError struct {
+	Response struct {
+		Error apiErrorResponse `json:"Error"`
+	} `json:"Response"`
+}
+
+type apiErrorResponse struct {
+	Code    string `json:"code"`
+	Message string `json:"message"`
+}
+
+func (vae VersionAPIError) Error() string {
+	return vae.Response.Error.Message
+}
+
+type ClientError struct {
+	Message string
+}
+
+func (ce ClientError) Error() string {
+	return ce.Message
+}
+
+func makeClientError(err error) ClientError {
+	return ClientError{
+		Message: err.Error(),
 	}
 }
