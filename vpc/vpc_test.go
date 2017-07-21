@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestDescribeProject(t *testing.T) {
+func TestDescribeVpc(t *testing.T) {
 	client, err := NewClientFromEnv()
 	if err != nil {
 		t.Fatal(err)

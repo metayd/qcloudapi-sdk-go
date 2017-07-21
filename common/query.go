@@ -44,7 +44,7 @@ func encodeStructWithPrefix(prefix string, val reflect.Value, v *url.Values) err
 				}
 			}
 		}
-	case reflect.Ptr:
+	case reflect.Ptr, reflect.Interface:
 		if err := encodeStructWithPrefix(prefix, val.Elem(), v); err != nil {
 			return err
 		}
@@ -58,7 +58,6 @@ func encodeStructWithPrefix(prefix string, val reflect.Value, v *url.Values) err
 		v.Set(strings.TrimLeft(prefix, "."), fmt.Sprint(val))
 	case reflect.Bool:
 		v.Set(strings.TrimLeft(prefix, "."), fmt.Sprint(val))
-	default:
 	}
 	return nil
 }

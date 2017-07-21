@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestDescribeProject(t *testing.T) {
+func TestDescribeInstances(t *testing.T) {
 	client, err := NewClientFromEnv()
 	if err != nil {
 		t.Fatal(err)
@@ -14,6 +14,9 @@ func TestDescribeProject(t *testing.T) {
 
 	args := DescribeInstancesArgs{
 		Version: version,
+		Filters: &[]Filter{
+			NewFilter("zone", "ap-guangzhou-2"),
+		},
 	}
 
 	response, err := client.DescribeInstances(&args)
