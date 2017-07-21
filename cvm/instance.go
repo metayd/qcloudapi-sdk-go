@@ -24,6 +24,10 @@ type Filter struct {
 	Values []interface{} `qcloud_arg:"Values"`
 }
 
+func NewFilter(name string, values ...interface{}) Filter {
+	return Filter{Name: name, Values: values}
+}
+
 type DescribeInstancesResponse struct {
 	Response struct {
 		TotalCount  int        `json:"TotalCount"`
