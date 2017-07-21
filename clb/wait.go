@@ -45,3 +45,19 @@ func (task *Task) WaitUntilDone(ctx context.Context, client *Client) (int, error
 		}
 	}
 }
+
+type AsyncTask interface {
+	Id() int
+}
+
+type CreateFunc func() (AsyncTask, error)
+
+func WaitUntilDone(createFunc CreateFunc, client *Client) (int, error) {
+	asyncTask, err := createFunc()
+	if err != nil {
+		return TaskFailed, err
+	}
+
+	task := NewTask(asyncTask.Id())
+	return task.WaitUntilDone(context.Background(), client)
+}

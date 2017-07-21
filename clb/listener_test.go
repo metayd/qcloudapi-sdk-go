@@ -15,7 +15,7 @@ func TestLoadBalancerListeners(t *testing.T) {
 	}
 
 	createLoadBalancerArgs := CreateLoadBalancerArgs{
-		LoadBalancerType: 3,
+		LoadBalancerType: LoadBalancerTypePrivateNetwork,
 	}
 	lb, err := client.CreateLoadBalancer(&createLoadBalancerArgs)
 	if err != nil {
@@ -33,7 +33,7 @@ func TestLoadBalancerListeners(t *testing.T) {
 		time.Sleep(time.Second * 1)
 		describeResponse, err := client.DescribeLoadBalancers(&describeArgs)
 		if err != nil {
-			t.Fatal(err)
+			continue
 		}
 		if len(describeResponse.LoadBalancerSet) > 0 {
 			break
@@ -44,9 +44,9 @@ func TestLoadBalancerListeners(t *testing.T) {
 		LoadBalancerId: lbId,
 		Listeners: []CreateListenerOpts{
 			{
-				LoadBalancerPort: 9000,
-				InstancePort:     9000,
-				Protocol:         3,
+				LoadBalancerPort: 9000 + rand.Intn(1000),
+				InstancePort:     9000 + rand.Intn(1000),
+				Protocol:         LoadBalanceListenerProtocolUDP,
 			},
 		},
 	}
@@ -76,27 +76,43 @@ func TestLoadBalancerListeners(t *testing.T) {
 		ListenerName:   &newName,
 	}
 
-	modifyListenerResponse, err := client.ModifyLoadBalancerListener(&modifyListenerArgs)
+	_, err = WaitUntilDone(
+		func() (AsyncTask, error) {
+			return client.ModifyLoadBalancerListener(&modifyListenerArgs)
+		},
+		client,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	task = NewTask(modifyListenerResponse.RequestId)
-	task.WaitUntilDone(context.Background(), client)
 
 	deleteArgs := DeleteLoadBalancerListenersArgs{
 		LoadBalancerId: lbId,
 		ListenerIds:    createListenerResponse.ListenerIds,
 	}
 
-	deleteListenerResponse, err := client.DeleteLoadBalancerListeners(&deleteArgs)
+	_, err = WaitUntilDone(
+		func() (AsyncTask, error) {
+			return client.DeleteLoadBalancerListeners(&deleteArgs)
+		},
+		client,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	task = NewTask(deleteListenerResponse.RequestId)
-	_, err = task.WaitUntilDone(context.Background(), client)
+	deleteLbArgs := DeleteLoadBalancersArgs{
+		LoadBalancerIds: []string{lbId},
+	}
+
+	_, err = WaitUntilDone(
+		func() (AsyncTask, error) {
+			return client.DeleteLoadBalancers(&deleteLbArgs)
+		},
+		client,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 }

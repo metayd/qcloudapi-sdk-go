@@ -1,5 +1,12 @@
 package clb
 
+const (
+	LoadBalanceListenerProtocolHTTP  = 1
+	LoadBalanceListenerProtocolTCP   = 2
+	LoadBalanceListenerProtocolUDP   = 3
+	LoadBalanceListenerProtocolHTTPS = 4
+)
+
 type CreateListenerOpts struct {
 	LoadBalancerPort int     `qcloud_arg:"loadBalancerPort,required"`
 	InstancePort     int     `qcloud_arg:"instancePort,required"`
@@ -33,6 +40,10 @@ type CreateLoadBalancerListenersResponse struct {
 	Response
 	RequestId   int      `json:"requestId"`
 	ListenerIds []string `json:"listenerIds"`
+}
+
+func (response CreateLoadBalancerListenersResponse) Id() int {
+	return response.RequestId
 }
 
 func (client *Client) CreateLoadBalancerListeners(args *CreateLoadBalancerListenersArgs) (
@@ -103,6 +114,10 @@ type DeleteLoadBalancerListenersResponse struct {
 	RequestId int `json:"requestId"`
 }
 
+func (response DeleteLoadBalancerListenersResponse) Id() int {
+	return response.RequestId
+}
+
 func (client *Client) DeleteLoadBalancerListeners(args *DeleteLoadBalancerListenersArgs) (
 	*DeleteLoadBalancerListenersResponse,
 	error,
@@ -141,6 +156,10 @@ type ModifyLoadBalancerListenerArgs struct {
 type ModifyLoadBalancerListenerResponse struct {
 	Response
 	RequestId int `json:"requestId"`
+}
+
+func (response ModifyLoadBalancerListenerResponse) Id() int {
+	return response.RequestId
 }
 
 func (client *Client) ModifyLoadBalancerListener(args *ModifyLoadBalancerListenerArgs) (

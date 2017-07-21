@@ -16,7 +16,7 @@ func TestLoadBalanceBackends(t *testing.T) {
 	}
 
 	createLoadBalancerArgs := CreateLoadBalancerArgs{
-		LoadBalancerType: 3,
+		LoadBalancerType: LoadBalancerTypePrivateNetwork,
 	}
 	lb, err := client.CreateLoadBalancer(&createLoadBalancerArgs)
 	if err != nil {
@@ -34,7 +34,7 @@ func TestLoadBalanceBackends(t *testing.T) {
 		time.Sleep(time.Second * 1)
 		describeResponse, err := client.DescribeLoadBalancers(&describeArgs)
 		if err != nil {
-			t.Fatal(err)
+			continue
 		}
 		if len(describeResponse.LoadBalancerSet) > 0 {
 			break
@@ -63,7 +63,7 @@ func TestLoadBalanceBackends(t *testing.T) {
 
 	registerArgs := RegisterInstancesWithLoadBalancerArgs{
 		LoadBalancerId: lbId,
-		Backends: []backendOpts{
+		Backends: []RegisterInstancesOpts{
 			{
 				InstanceId: instanceId,
 			},
@@ -102,7 +102,7 @@ func TestLoadBalanceBackends(t *testing.T) {
 
 	modifyBackendArgs := ModifyLoadBalancerBackendsArgs{
 		LoadBalancerId: lbId,
-		Backends: []modifyBackendOpts{
+		Backends: []ModifyBackendOpts{
 			{
 				InstanceId: instanceId,
 				Weight:     int(rand.Intn(100)),
@@ -110,13 +110,15 @@ func TestLoadBalanceBackends(t *testing.T) {
 		},
 	}
 
-	modifyResponse, err := client.ModifyLoadBalancerBackends(&modifyBackendArgs)
+	_, err = WaitUntilDone(
+		func() (AsyncTask, error) {
+			return client.ModifyLoadBalancerBackends(&modifyBackendArgs)
+		},
+		client,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	task = NewTask(modifyResponse.RequestId)
-	task.WaitUntilDone(context.Background(), client)
 
 	deRegisterArgs := DeregisterInstancesFromLoadBalancerArgs{
 		LoadBalancerId: lbId,
@@ -127,13 +129,26 @@ func TestLoadBalanceBackends(t *testing.T) {
 		},
 	}
 
-	deRegisterResponse, err := client.DeregisterInstancesFromLoadBalancer(&deRegisterArgs)
+	_, err = WaitUntilDone(
+		func() (AsyncTask, error) {
+			return client.DeregisterInstancesFromLoadBalancer(&deRegisterArgs)
+		},
+		client,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	task = NewTask(deRegisterResponse.RequestId)
-	_, err = task.WaitUntilDone(context.Background(), client)
+	deleteLbArgs := DeleteLoadBalancersArgs{
+		LoadBalancerIds: []string{lbId},
+	}
+
+	_, err = WaitUntilDone(
+		func() (AsyncTask, error) {
+			return client.DeleteLoadBalancers(&deleteLbArgs)
+		},
+		client,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}

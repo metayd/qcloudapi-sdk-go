@@ -1,11 +1,11 @@
 package clb
 
 type RegisterInstancesWithLoadBalancerArgs struct {
-	LoadBalancerId string        `qcloud_arg:"loadBalancerId,required"`
-	Backends       []backendOpts `qcloud_arg:"backends,required"`
+	LoadBalancerId string                  `qcloud_arg:"loadBalancerId,required"`
+	Backends       []RegisterInstancesOpts `qcloud_arg:"backends,required"`
 }
 
-type backendOpts struct {
+type RegisterInstancesOpts struct {
 	InstanceId string `qcloud_arg:"instanceId,required"`
 	Weight     *int   `qcloud_arg:"weight"`
 }
@@ -13,6 +13,10 @@ type backendOpts struct {
 type RegisterInstancesWithLoadBalancerResponse struct {
 	Response
 	RequestId int `json:"requestId"`
+}
+
+func (response RegisterInstancesWithLoadBalancerResponse) Id() int {
+	return response.RequestId
 }
 
 func (client *Client) RegisterInstancesWithLoadBalancer(args *RegisterInstancesWithLoadBalancerArgs) (
@@ -35,11 +39,11 @@ type DescribeLoadBalancerBackendsArgs struct {
 
 type DescribeLoadBalancerBackendsResponse struct {
 	Response
-	TotalCount int       `json:"totalCount"`
-	BackendSet []backend `json:"backendSet"`
+	TotalCount int                    `json:"totalCount"`
+	BackendSet []LoadBalancerBackends `json:"backendSet"`
 }
 
-type backend struct {
+type LoadBalancerBackends struct {
 	InstanceId     string   `json:"instanceId"`
 	UnInstanceId   string   `json:"unInstanceId"`
 	Weight         int      `json:"weight"`
@@ -63,10 +67,10 @@ func (client *Client) DescribeLoadBalancerBackends(args *DescribeLoadBalancerBac
 
 type ModifyLoadBalancerBackendsArgs struct {
 	LoadBalancerId string              `qcloud_arg:"loadBalancerId,required"`
-	Backends       []modifyBackendOpts `qcloud_arg:"backends,required"`
+	Backends       []ModifyBackendOpts `qcloud_arg:"backends,required"`
 }
 
-type modifyBackendOpts struct {
+type ModifyBackendOpts struct {
 	InstanceId string `qcloud_arg:"instanceId,required"`
 	Weight     int    `qcloud_arg:"weight,required"`
 }
@@ -74,6 +78,10 @@ type modifyBackendOpts struct {
 type ModifyLoadBalancerBackendsResponse struct {
 	Response
 	RequestId int `json:"requestId"`
+}
+
+func (response ModifyLoadBalancerBackendsResponse) Id() int {
+	return response.RequestId
 }
 
 func (client *Client) ModifyLoadBalancerBackends(args *ModifyLoadBalancerBackendsArgs) (
@@ -100,6 +108,10 @@ type deRegisterBackend struct {
 type DeregisterInstancesFromLoadBalancerResponse struct {
 	Response
 	RequestId int `json:"requestId"`
+}
+
+func (response DeregisterInstancesFromLoadBalancerResponse) Id() int {
+	return response.RequestId
 }
 
 func (client *Client) DeregisterInstancesFromLoadBalancer(args *DeregisterInstancesFromLoadBalancerArgs) (
