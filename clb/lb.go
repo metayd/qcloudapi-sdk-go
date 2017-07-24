@@ -1,5 +1,11 @@
 package clb
 
+const (
+	LoadBalancerTypePublicNetwork              = 1
+	LoadBalancerTypePublicNetworkWithDailyRate = 2
+	LoadBalancerTypePrivateNetwork             = 3
+)
+
 type DescribeLoadBalancersArgs struct {
 	LoadBalancerIds  *[]string `qcloud_arg:"loadBalancerIds"`
 	LoadBalancerType *int      `qcloud_arg:"loadBalancerType"`
@@ -102,6 +108,10 @@ type ModifyLoadBalancerAttributesResponse struct {
 	RequestId int `json:"requestId"`
 }
 
+func (response ModifyLoadBalancerAttributesResponse) Id() int {
+	return response.RequestId
+}
+
 func (client *Client) ModifyLoadBalancerAttributes(args *ModifyLoadBalancerAttributesArgs) (*ModifyLoadBalancerAttributesResponse, error) {
 	response := &ModifyLoadBalancerAttributesResponse{}
 	err := client.Invoke("ModifyLoadBalancerAttributes", args, response)
@@ -120,6 +130,10 @@ type DeleteLoadBalancersResponse struct {
 	RequestId int `json:"requestId"`
 }
 
+func (response DeleteLoadBalancersResponse) Id() int {
+	return response.RequestId
+}
+
 func (client *Client) DeleteLoadBalancers(args *DeleteLoadBalancersArgs) (*DeleteLoadBalancersResponse, error) {
 	response := &DeleteLoadBalancersResponse{}
 	err := client.Invoke("DeleteLoadBalancers", args, response)
@@ -131,6 +145,10 @@ func (client *Client) DeleteLoadBalancers(args *DeleteLoadBalancersArgs) (*Delet
 
 type DescribeLoadBalancersTaskResultArgs struct {
 	RequestId int `qcloud_arg:"requestId,required"`
+}
+
+func (response DescribeLoadBalancersTaskResultArgs) Id() int {
+	return response.RequestId
 }
 
 type DescribeLoadBalancersTaskResultResponse struct {
