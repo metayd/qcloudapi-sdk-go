@@ -116,18 +116,9 @@ func TestLoadBalanceBackends(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	deRegisterArgs := DeregisterInstancesFromLoadBalancerArgs{
-		LoadBalancerId: lbId,
-		Backends: []deRegisterBackend{
-			{
-				InstanceId: instanceId,
-			},
-		},
-	}
-
 	_, err = WaitUntilDone(
 		func() (AsyncTask, error) {
-			return client.DeregisterInstancesFromLoadBalancer(&deRegisterArgs)
+			return client.DeregisterInstancesFromLoadBalancer(lbId, []string{instanceId})
 		},
 		client,
 	)
@@ -135,13 +126,9 @@ func TestLoadBalanceBackends(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	deleteLbArgs := DeleteLoadBalancersArgs{
-		LoadBalancerIds: []string{lbId},
-	}
-
 	_, err = WaitUntilDone(
 		func() (AsyncTask, error) {
-			return client.DeleteLoadBalancers(&deleteLbArgs)
+			return client.DeleteLoadBalancers([]string{lbId})
 		},
 		client,
 	)

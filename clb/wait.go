@@ -9,8 +9,8 @@ const (
 	TaskCheckInterval = time.Second * 1
 
 	TaskSuccceed = 0
-	TaskFailed = 1
-	TaskRunning = 2
+	TaskFailed   = 1
+	TaskRunning  = 2
 
 	TaskStatusUnknown = 9
 )
@@ -59,7 +59,7 @@ func WaitUntilDone(createFunc CreateFunc, client *Client) (int, error) {
 	}
 
 	task := NewTask(asyncTask.Id())
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second * 180)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*180)
 	defer cancel()
 	return task.WaitUntilDone(ctx, client)
 }

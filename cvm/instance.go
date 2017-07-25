@@ -3,14 +3,14 @@ package cvm
 import "time"
 
 const (
-	FilterNameZone = "zone"
-	FilterNameProjectId = "project-id"
-	FilterNameHostId = "host-id"
-	FilterNameInstanceId = "instance-id"
-	FilterNameInstanceName = "instance-name"
+	FilterNameZone               = "zone"
+	FilterNameProjectId          = "project-id"
+	FilterNameHostId             = "host-id"
+	FilterNameInstanceId         = "instance-id"
+	FilterNameInstanceName       = "instance-name"
 	FilterNameInstanceChargeType = "instance-charge-type"
-	FilterNamePrivateIpAddress = "private-ip-address"
-	FilterNamePublicIpAddress = "public-ip-address"
+	FilterNamePrivateIpAddress   = "private-ip-address"
+	FilterNamePublicIpAddress    = "public-ip-address"
 
 	DefaultVersion = "2017-03-12"
 )
@@ -34,55 +34,55 @@ func NewFilter(name string, values ...interface{}) Filter {
 
 type DescribeInstancesResponse struct {
 	Response
-	TotalCount  int        `json:"TotalCount"`
+	TotalCount  int            `json:"TotalCount"`
 	InstanceSet []InstanceInfo `json:"InstanceSet"`
-	RequestID   string `json:"RequestId"`
+	RequestID   string         `json:"RequestId"`
 }
 
 type Placement struct {
-	Zone      string `json:"Zone"`
+	Zone      string      `json:"Zone"`
 	HostID    interface{} `json:"HostId"`
-	ProjectID int `json:"ProjectId"`
+	ProjectID int         `json:"ProjectId"`
 }
 
 type Disk struct {
 	DiskType string `json:"DiskType"`
 	DiskID   string `json:"DiskId"`
-	DiskSize int `json:"DiskSize"`
+	DiskSize int    `json:"DiskSize"`
 }
 
-type InternetAccessible  struct {
-	InternetMaxBandwidthOut int `json:"InternetMaxBandwidthOut"`
+type InternetAccessible struct {
+	InternetMaxBandwidthOut int    `json:"InternetMaxBandwidthOut"`
 	InternetChargeType      string `json:"InternetChargeType"`
 }
 
 type VirtualPrivateCloud struct {
 	VpcID        string `json:"VpcId"`
 	SubnetID     string `json:"SubnetId"`
-	AsVpcGateway bool `json:"AsVpcGateway"`
+	AsVpcGateway bool   `json:"AsVpcGateway"`
 }
 
 type InstanceInfo struct {
-	InstanceID          string `json:"InstanceId"`
-	InstanceType        string `json:"InstanceType"`
-	CPU                 int `json:"CPU"`
-	Memory              int `json:"Memory"`
-	InstanceName        string `json:"InstanceName"`
-	InstanceChargeType  string `json:"InstanceChargeType"`
-	PrivateIPAddresses  []string `json:"PrivateIpAddresses"`
-	PublicIPAddresses   []string `json:"PublicIpAddresses"`
-	ImageID             string `json:"ImageId"`
-	OsName              string `json:"OsName"`
-	RenewFlag           string `json:"RenewFlag"`
+	InstanceID         string   `json:"InstanceId"`
+	InstanceType       string   `json:"InstanceType"`
+	CPU                int      `json:"CPU"`
+	Memory             int      `json:"Memory"`
+	InstanceName       string   `json:"InstanceName"`
+	InstanceChargeType string   `json:"InstanceChargeType"`
+	PrivateIPAddresses []string `json:"PrivateIpAddresses"`
+	PublicIPAddresses  []string `json:"PublicIpAddresses"`
+	ImageID            string   `json:"ImageId"`
+	OsName             string   `json:"OsName"`
+	RenewFlag          string   `json:"RenewFlag"`
 
-	Placement           Placement`json:"Placement"`
-	SystemDisk          Disk `json:"SystemDisk"`
-	DataDisks           []Disk `json:"DataDisks"`
-	InternetAccessible  InternetAccessible `json:"InternetAccessible"`
+	Placement           Placement           `json:"Placement"`
+	SystemDisk          Disk                `json:"SystemDisk"`
+	DataDisks           []Disk              `json:"DataDisks"`
+	InternetAccessible  InternetAccessible  `json:"InternetAccessible"`
 	VirtualPrivateCloud VirtualPrivateCloud `json:"VirtualPrivateCloud"`
 
-	CreatedTime         time.Time `json:"CreatedTime"`
-	ExpiredTime         time.Time `json:"ExpiredTime"`
+	CreatedTime time.Time `json:"CreatedTime"`
+	ExpiredTime time.Time `json:"ExpiredTime"`
 }
 
 func (client *Client) DescribeInstances(args *DescribeInstancesArgs) (*DescribeInstancesResponse, error) {

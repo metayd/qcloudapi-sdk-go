@@ -2,7 +2,7 @@ package clb
 
 const (
 	LoadBalancerTypePublicNetworkWithDailyRate = 2
-	LoadBalancerTypePrivateNetwork = 3
+	LoadBalancerTypePrivateNetwork             = 3
 
 	LoadBalancerNameMaxLenth = 20
 )
@@ -88,7 +88,7 @@ type CreateLoadBalancerResponse struct {
 	Response
 	UnLoadBalancerIds map[string][]string `json:"unLoadBalancerIds"`
 	DealIds           []string            `json:"dealIds"`
-	RequestId         int `json:"requestId"`
+	RequestId         int                 `json:"requestId"`
 }
 
 func (response CreateLoadBalancerResponse) Id() int {
@@ -150,7 +150,7 @@ func (response DeleteLoadBalancersResponse) Id() int {
 
 func (client *Client) DeleteLoadBalancers(loadBalancerIds []string) (*DeleteLoadBalancersResponse, error) {
 	args := &DeleteLoadBalancersArgs{
-		LoadBalancerIds:loadBalancerIds,
+		LoadBalancerIds: loadBalancerIds,
 	}
 	response := &DeleteLoadBalancersResponse{}
 	err := client.Invoke("DeleteLoadBalancers", args, response)
@@ -171,13 +171,13 @@ func (response DescribeLoadBalancersTaskResultArgs) Id() int {
 type DescribeLoadBalancersTaskResultResponse struct {
 	Response
 	Data struct {
-			 Status int `json:"status"`
-		 } `json:"data"`
+		Status int `json:"status"`
+	} `json:"data"`
 }
 
 func (client *Client) DescribeLoadBalancersTaskResult(taskId int) (*DescribeLoadBalancersTaskResultResponse, error) {
 	args := &DescribeLoadBalancersTaskResultArgs{
-		RequestId:taskId,
+		RequestId: taskId,
 	}
 	response := &DescribeLoadBalancersTaskResultResponse{}
 	err := client.Invoke("DescribeLoadBalancersTaskResult", args, response)
