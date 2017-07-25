@@ -55,11 +55,11 @@ func TestLoadBalanceBackends(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(instances.Response.InstanceSet) <= 0 {
+	if len(instances.InstanceSet) <= 0 {
 		t.Fatal("no enough instance for test")
 	}
 
-	instanceId := instances.Response.InstanceSet[0].InstanceId
+	instanceId := instances.InstanceSet[0].InstanceID
 
 	registerArgs := RegisterInstancesWithLoadBalancerArgs{
 		LoadBalancerId: lbId,
@@ -78,11 +78,7 @@ func TestLoadBalanceBackends(t *testing.T) {
 	task := NewTask(registerResponse.RequestId)
 	task.WaitUntilDone(context.Background(), client)
 
-	describeBackendArgs := DescribeLoadBalancerBackendsArgs{
-		LoadBalancerId: lbId,
-	}
-
-	describeResponse, err := client.DescribeLoadBalancerBackends(&describeBackendArgs)
+	describeResponse, err := client.DescribeLoadBalancerBackends(lbId, 0, 20)
 	if err != nil {
 		t.Fatal(err)
 	}

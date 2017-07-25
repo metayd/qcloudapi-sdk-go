@@ -1,15 +1,15 @@
 package clb
 
 const (
-	LoadBalanceListenerProtocolHTTP  = 1
-	LoadBalanceListenerProtocolTCP   = 2
-	LoadBalanceListenerProtocolUDP   = 3
+	LoadBalanceListenerProtocolHTTP = 1
+	LoadBalanceListenerProtocolTCP = 2
+	LoadBalanceListenerProtocolUDP = 3
 	LoadBalanceListenerProtocolHTTPS = 4
 )
 
 type CreateListenerOpts struct {
-	LoadBalancerPort int     `qcloud_arg:"loadBalancerPort,required"`
-	InstancePort     int     `qcloud_arg:"instancePort,required"`
+	LoadBalancerPort int32     `qcloud_arg:"loadBalancerPort,required"`
+	InstancePort     int32     `qcloud_arg:"instancePort,required"`
 	Protocol         int     `qcloud_arg:"protocol,required"`
 	ListenerName     *string `qcloud_arg:"listenerName"`
 	SessionExpire    *int    `qcloud_arg:"sessionExpire"`
@@ -47,8 +47,8 @@ func (response CreateLoadBalancerListenersResponse) Id() int {
 }
 
 func (client *Client) CreateLoadBalancerListeners(args *CreateLoadBalancerListenersArgs) (
-	*CreateLoadBalancerListenersResponse,
-	error,
+*CreateLoadBalancerListenersResponse,
+error,
 ) {
 	response := &CreateLoadBalancerListenersResponse{}
 	err := client.Invoke("CreateLoadBalancerListeners", args, response)
@@ -62,7 +62,7 @@ type DescribeLoadBalancerListenersArgs struct {
 	LoadBalancerId   string    `qcloud_arg:"loadBalancerId,required"`
 	ListenerIds      *[]string `qcloud_arg:"listenerIds"`
 	Protocol         *int      `qcloud_arg:"protocol"`
-	LoadBalancerPort *int      `qcloud_arg:"loadBalancerPort"`
+	LoadBalancerPort *int32      `qcloud_arg:"loadBalancerPort"`
 	Status           *int      `qcloud_arg:"status"`
 }
 
@@ -74,8 +74,8 @@ type DescribeLoadBalancerListenersResponse struct {
 
 type Listener struct {
 	UnListenerId     string `json:"unListenerId"`
-	LoadBalancerPort int    `json:"loadBalancerPort"`
-	InstancePort     int    `json:"instancePort"`
+	LoadBalancerPort int32    `json:"loadBalancerPort"`
+	InstancePort     int32    `json:"instancePort"`
 	Protocol         int    `json:"protocol"`
 	SessionExpire    int    `json:"sessionExpire"`
 	HealthSwitch     int    `json:"healthSwitch"`
@@ -93,8 +93,8 @@ type Listener struct {
 }
 
 func (client *Client) DescribeLoadBalancerListeners(args *DescribeLoadBalancerListenersArgs) (
-	*DescribeLoadBalancerListenersResponse,
-	error,
+*DescribeLoadBalancerListenersResponse,
+error,
 ) {
 	response := &DescribeLoadBalancerListenersResponse{}
 	err := client.Invoke("DescribeLoadBalancerListeners", args, response)
@@ -118,12 +118,16 @@ func (response DeleteLoadBalancerListenersResponse) Id() int {
 	return response.RequestId
 }
 
-func (client *Client) DeleteLoadBalancerListeners(args *DeleteLoadBalancerListenersArgs) (
-	*DeleteLoadBalancerListenersResponse,
-	error,
+func (client *Client) DeleteLoadBalancerListeners(LoadBalancerId string, ListenerIds []string) (
+*DeleteLoadBalancerListenersResponse,
+error,
 ) {
+
 	response := &DeleteLoadBalancerListenersResponse{}
-	err := client.Invoke("DeleteLoadBalancerListeners", args, response)
+	err := client.Invoke("DeleteLoadBalancerListeners", &DeleteLoadBalancerListenersArgs{
+		LoadBalancerId:LoadBalancerId,
+		ListenerIds:ListenerIds,
+	}, response)
 	if err != nil {
 		return nil, err
 	}
@@ -163,8 +167,8 @@ func (response ModifyLoadBalancerListenerResponse) Id() int {
 }
 
 func (client *Client) ModifyLoadBalancerListener(args *ModifyLoadBalancerListenerArgs) (
-	*ModifyLoadBalancerListenerResponse,
-	error,
+*ModifyLoadBalancerListenerResponse,
+error,
 ) {
 	response := &ModifyLoadBalancerListenerResponse{}
 	err := client.Invoke("ModifyLoadBalancerListener", args, response)
