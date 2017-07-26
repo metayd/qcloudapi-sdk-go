@@ -23,7 +23,9 @@ func NewTask(requestId int) Task {
 	return Task{requestId: requestId}
 }
 
-func (task *Task) WaitUntilDone(ctx context.Context, client *Client) (int, error) {
+//TODO 如果还未执行tiker已经到了呢
+//TODO timeout怎么提示
+func (task Task) WaitUntilDone(ctx context.Context, client *Client) (int, error) {
 	ticker := time.NewTicker(TaskCheckInterval)
 	defer ticker.Stop()
 
@@ -32,10 +34,7 @@ func (task *Task) WaitUntilDone(ctx context.Context, client *Client) (int, error
 		case <-ctx.Done():
 			return TaskStatusUnknown, ctx.Err()
 		case <-ticker.C:
-			args := DescribeLoadBalancersTaskResultArgs{
-				RequestId: task.requestId,
-			}
-			response, err := client.DescribeLoadBalancersTaskResult(&args)
+			response, err := client.DescribeLoadBalancersTaskResult(task.requestId)
 			if err != nil {
 				return TaskStatusUnknown, err
 			}
@@ -52,6 +51,7 @@ type AsyncTask interface {
 
 type CreateFunc func() (AsyncTask, error)
 
+//TODO fix this
 func WaitUntilDone(createFunc CreateFunc, client *Client) (int, error) {
 	asyncTask, err := createFunc()
 	if err != nil {
@@ -59,5 +59,7 @@ func WaitUntilDone(createFunc CreateFunc, client *Client) (int, error) {
 	}
 
 	task := NewTask(asyncTask.Id())
-	return task.WaitUntilDone(context.Background(), client)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*180)
+	defer cancel()
+	return task.WaitUntilDone(ctx, client)
 }

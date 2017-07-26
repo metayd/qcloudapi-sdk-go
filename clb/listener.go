@@ -8,8 +8,8 @@ const (
 )
 
 type CreateListenerOpts struct {
-	LoadBalancerPort int     `qcloud_arg:"loadBalancerPort,required"`
-	InstancePort     int     `qcloud_arg:"instancePort,required"`
+	LoadBalancerPort int32   `qcloud_arg:"loadBalancerPort,required"`
+	InstancePort     int32   `qcloud_arg:"instancePort,required"`
 	Protocol         int     `qcloud_arg:"protocol,required"`
 	ListenerName     *string `qcloud_arg:"listenerName"`
 	SessionExpire    *int    `qcloud_arg:"sessionExpire"`
@@ -62,7 +62,7 @@ type DescribeLoadBalancerListenersArgs struct {
 	LoadBalancerId   string    `qcloud_arg:"loadBalancerId,required"`
 	ListenerIds      *[]string `qcloud_arg:"listenerIds"`
 	Protocol         *int      `qcloud_arg:"protocol"`
-	LoadBalancerPort *int      `qcloud_arg:"loadBalancerPort"`
+	LoadBalancerPort *int32    `qcloud_arg:"loadBalancerPort"`
 	Status           *int      `qcloud_arg:"status"`
 }
 
@@ -74,8 +74,8 @@ type DescribeLoadBalancerListenersResponse struct {
 
 type Listener struct {
 	UnListenerId     string `json:"unListenerId"`
-	LoadBalancerPort int    `json:"loadBalancerPort"`
-	InstancePort     int    `json:"instancePort"`
+	LoadBalancerPort int32  `json:"loadBalancerPort"`
+	InstancePort     int32  `json:"instancePort"`
 	Protocol         int    `json:"protocol"`
 	SessionExpire    int    `json:"sessionExpire"`
 	HealthSwitch     int    `json:"healthSwitch"`
@@ -118,12 +118,16 @@ func (response DeleteLoadBalancerListenersResponse) Id() int {
 	return response.RequestId
 }
 
-func (client *Client) DeleteLoadBalancerListeners(args *DeleteLoadBalancerListenersArgs) (
+func (client *Client) DeleteLoadBalancerListeners(LoadBalancerId string, ListenerIds []string) (
 	*DeleteLoadBalancerListenersResponse,
 	error,
 ) {
+
 	response := &DeleteLoadBalancerListenersResponse{}
-	err := client.Invoke("DeleteLoadBalancerListeners", args, response)
+	err := client.Invoke("DeleteLoadBalancerListeners", &DeleteLoadBalancerListenersArgs{
+		LoadBalancerId: LoadBalancerId,
+		ListenerIds:    ListenerIds,
+	}, response)
 	if err != nil {
 		return nil, err
 	}

@@ -53,10 +53,15 @@ type LoadBalancerBackends struct {
 	InstanceStatus int      `json:"instanceStatus"`
 }
 
-func (client *Client) DescribeLoadBalancerBackends(args *DescribeLoadBalancerBackendsArgs) (
+func (client *Client) DescribeLoadBalancerBackends(LoadBalancerId string, Offset int, Limit int) (
 	*DescribeLoadBalancerBackendsResponse,
 	error,
 ) {
+	args := &DescribeLoadBalancerBackendsArgs{
+		LoadBalancerId: LoadBalancerId,
+		Offset:         Offset,
+		Limit:          Limit,
+	}
 	response := &DescribeLoadBalancerBackendsResponse{}
 	err := client.Invoke("DescribeLoadBalancerBackends", args, response)
 	if err != nil {
@@ -114,10 +119,20 @@ func (response DeregisterInstancesFromLoadBalancerResponse) Id() int {
 	return response.RequestId
 }
 
-func (client *Client) DeregisterInstancesFromLoadBalancer(args *DeregisterInstancesFromLoadBalancerArgs) (
+func (client *Client) DeregisterInstancesFromLoadBalancer(LoadBalancerId string, InstanceIds []string) (
 	*DeregisterInstancesFromLoadBalancerResponse,
 	error,
 ) {
+
+	backends := []deRegisterBackend{}
+	for _, instanceId := range InstanceIds {
+		backends = append(backends, deRegisterBackend{InstanceId: instanceId})
+	}
+
+	args := &DeregisterInstancesFromLoadBalancerArgs{
+		LoadBalancerId: LoadBalancerId,
+		Backends:       backends,
+	}
 	response := &DeregisterInstancesFromLoadBalancerResponse{}
 	err := client.Invoke("DeregisterInstancesFromLoadBalancer", args, response)
 	if err != nil {

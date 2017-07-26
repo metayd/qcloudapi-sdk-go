@@ -1,15 +1,15 @@
 package metadata
 
 import (
-	"fmt"
-	"io"
-	"net"
-	"time"
 	"errors"
+	"fmt"
+	. "github.com/dbdd4us/qcloudapi-sdk-go/util"
+	"io"
 	"io/ioutil"
+	"net"
 	"net/http"
 	"net/url"
-	. "github.com/dbdd4us/qcloudapi-sdk-go/util"
+	"time"
 )
 
 type Request struct {
@@ -18,12 +18,12 @@ type Request struct {
 const (
 	ENDPOINT = "http://metadata.tencentyun.com/meta-data"
 
-	INSTANCE_ID = "instance-id"
-	UUID = "uuid"
-	MAC = "mac"
+	INSTANCE_ID  = "instance-id"
+	UUID         = "uuid"
+	MAC          = "mac"
 	PRIVATE_IPV4 = "local-ipv4"
-	REGION = "placement/region"
-	ZONE = "placement/zone"
+	REGION       = "placement/region"
+	ZONE         = "placement/zone"
 )
 
 type IMetaDataClient interface {

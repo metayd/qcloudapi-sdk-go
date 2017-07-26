@@ -44,8 +44,8 @@ func TestLoadBalancerListeners(t *testing.T) {
 		LoadBalancerId: lbId,
 		Listeners: []CreateListenerOpts{
 			{
-				LoadBalancerPort: 9000 + rand.Intn(1000),
-				InstancePort:     9000 + rand.Intn(1000),
+				LoadBalancerPort: 9000 + rand.Int31n(1000),
+				InstancePort:     9000 + rand.Int31n(1000),
 				Protocol:         LoadBalanceListenerProtocolUDP,
 			},
 		},
@@ -86,14 +86,9 @@ func TestLoadBalancerListeners(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	deleteArgs := DeleteLoadBalancerListenersArgs{
-		LoadBalancerId: lbId,
-		ListenerIds:    createListenerResponse.ListenerIds,
-	}
-
 	_, err = WaitUntilDone(
 		func() (AsyncTask, error) {
-			return client.DeleteLoadBalancerListeners(&deleteArgs)
+			return client.DeleteLoadBalancerListeners(lbId, createListenerResponse.ListenerIds)
 		},
 		client,
 	)
@@ -101,13 +96,9 @@ func TestLoadBalancerListeners(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	deleteLbArgs := DeleteLoadBalancersArgs{
-		LoadBalancerIds: []string{lbId},
-	}
-
 	_, err = WaitUntilDone(
 		func() (AsyncTask, error) {
-			return client.DeleteLoadBalancers(&deleteLbArgs)
+			return client.DeleteLoadBalancers([]string{lbId})
 		},
 		client,
 	)

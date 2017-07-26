@@ -62,13 +62,9 @@ func TestLoadBalancer(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	deleteArgs := DeleteLoadBalancersArgs{
-		LoadBalancerIds: []string{lbId[0]},
-	}
-
 	_, err = WaitUntilDone(
 		func() (AsyncTask, error) {
-			return client.DeleteLoadBalancers(&deleteArgs)
+			return client.DeleteLoadBalancers(lbId)
 		},
 		client,
 	)

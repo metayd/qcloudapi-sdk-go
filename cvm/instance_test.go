@@ -24,6 +24,6 @@ func TestDescribeInstances(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	t.Logf("%++v", response.Response.InstanceSet)
+	t.Logf("%++v", response.InstanceSet)
 
 }

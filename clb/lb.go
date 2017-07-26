@@ -1,9 +1,10 @@
 package clb
 
 const (
-	LoadBalancerTypePublicNetwork              = 1
 	LoadBalancerTypePublicNetworkWithDailyRate = 2
 	LoadBalancerTypePrivateNetwork             = 3
+
+	LoadBalancerNameMaxLenth = 20
 )
 
 type DescribeLoadBalancersArgs struct {
@@ -37,6 +38,7 @@ type LoadBalancer struct {
 	Domain           string   `json:"domain"`
 	LoadBalancerVips []string `json:"loadBalancerVips"`
 	Status           int      `json:"status"`
+	Forward          int      `json:"forward"`
 	CreateTime       string   `json:"createTime"`
 	StatusTime       string   `json:"statusTime"`
 	ProjectId        int      `json:"projectId"`
@@ -86,6 +88,18 @@ type CreateLoadBalancerResponse struct {
 	Response
 	UnLoadBalancerIds map[string][]string `json:"unLoadBalancerIds"`
 	DealIds           []string            `json:"dealIds"`
+	RequestId         int                 `json:"requestId"`
+}
+
+func (response CreateLoadBalancerResponse) Id() int {
+	return response.RequestId
+}
+
+func (response CreateLoadBalancerResponse) GetUnLoadBalancerIds() (unlbIds []string) {
+	for _, v := range response.UnLoadBalancerIds {
+		unlbIds = append(unlbIds, v...)
+	}
+	return unlbIds
 }
 
 func (client *Client) CreateLoadBalancer(args *CreateLoadBalancerArgs) (*CreateLoadBalancerResponse, error) {
@@ -134,7 +148,10 @@ func (response DeleteLoadBalancersResponse) Id() int {
 	return response.RequestId
 }
 
-func (client *Client) DeleteLoadBalancers(args *DeleteLoadBalancersArgs) (*DeleteLoadBalancersResponse, error) {
+func (client *Client) DeleteLoadBalancers(loadBalancerIds []string) (*DeleteLoadBalancersResponse, error) {
+	args := &DeleteLoadBalancersArgs{
+		LoadBalancerIds: loadBalancerIds,
+	}
 	response := &DeleteLoadBalancersResponse{}
 	err := client.Invoke("DeleteLoadBalancers", args, response)
 	if err != nil {
@@ -158,7 +175,10 @@ type DescribeLoadBalancersTaskResultResponse struct {
 	} `json:"data"`
 }
 
-func (client *Client) DescribeLoadBalancersTaskResult(args *DescribeLoadBalancersTaskResultArgs) (*DescribeLoadBalancersTaskResultResponse, error) {
+func (client *Client) DescribeLoadBalancersTaskResult(taskId int) (*DescribeLoadBalancersTaskResultResponse, error) {
+	args := &DescribeLoadBalancersTaskResultArgs{
+		RequestId: taskId,
+	}
 	response := &DescribeLoadBalancersTaskResultResponse{}
 	err := client.Invoke("DescribeLoadBalancersTaskResult", args, response)
 	if err != nil {
