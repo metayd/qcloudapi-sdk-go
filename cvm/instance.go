@@ -32,8 +32,11 @@ func NewFilter(name string, values ...interface{}) Filter {
 	return Filter{Name: name, Values: values}
 }
 
+type CvmResponse struct {
+	Response interface{} `json:"Response"`
+}
+
 type DescribeInstancesResponse struct {
-	Response
 	TotalCount  int            `json:"TotalCount"`
 	InstanceSet []InstanceInfo `json:"InstanceSet"`
 	RequestID   string         `json:"RequestId"`
@@ -86,10 +89,13 @@ type InstanceInfo struct {
 }
 
 func (client *Client) DescribeInstances(args *DescribeInstancesArgs) (*DescribeInstancesResponse, error) {
-	response := &DescribeInstancesResponse{}
-	err := client.Invoke("DescribeInstances", args, response)
+	realRsp := &DescribeInstancesResponse{}
+	cvmResponse := &CvmResponse{
+		Response: realRsp,
+	}
+	err := client.Invoke("DescribeInstances", args, cvmResponse)
 	if err != nil {
 		return &DescribeInstancesResponse{}, err
 	}
-	return response, nil
+	return realRsp, nil
 }
