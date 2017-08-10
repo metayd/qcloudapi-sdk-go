@@ -27,7 +27,7 @@ const (
 type Client struct {
 	*http.Client
 
-	credential Credential
+	credential CredentialInterface
 	opts       Opts
 }
 
@@ -42,12 +42,25 @@ type Opts struct {
 	Logger *logrus.Logger
 }
 
+type CredentialInterface interface {
+	GetSecretId() (string, error)
+	GetSecretKey() (string, error)
+}
+
 type Credential struct {
 	SecretId  string
 	SecretKey string
 }
 
-func NewClient(credential Credential, opts Opts) (*Client, error) {
+func (cred Credential) GetSecretId() (string, error) {
+	return cred.SecretId, nil
+}
+
+func (cred Credential) GetSecretKey() (string, error) {
+	return cred.SecretKey, nil
+}
+
+func NewClient(credential CredentialInterface, opts Opts) (*Client, error) {
 	if opts.Method == "" {
 		opts.Method = RequestMethodGET
 	}
@@ -79,12 +92,14 @@ func (client *Client) Invoke(action string, args interface{}, response interface
 func (client *Client) initCommonArgs(args *url.Values) {
 	args.Set("Region", client.opts.Region)
 	args.Set("Timestamp", fmt.Sprint(uint(time.Now().Unix())))
-	args.Set("SecretId", client.credential.SecretId)
 	args.Set("Nonce", fmt.Sprint(uint(rand.Int())))
 	args.Set("SignatureMethod", client.opts.SignatureMethod)
 }
 
-func (client *Client) signGetRequest(values *url.Values) string {
+func (client *Client) signGetRequest(secretId, secretKey string, values *url.Values) string {
+
+	values.Set("SecretId", secretId)
+
 	keys := make([]string, 0, len(*values))
 	for k := range *values {
 		keys = append(keys, k)
@@ -97,7 +112,7 @@ func (client *Client) signGetRequest(values *url.Values) string {
 	queryStr := strings.Join(kvs, "&")
 	reqStr := fmt.Sprintf("GET%s%s?%s", client.opts.Host, client.opts.Path, queryStr)
 
-	mac := hmac.New(sha256.New, []byte(client.credential.SecretKey))
+	mac := hmac.New(sha256.New, []byte(secretKey))
 	mac.Write([]byte(reqStr))
 	signature := mac.Sum(nil)
 
@@ -114,7 +129,17 @@ func (client *Client) InvokeWithGET(action string, args interface{}, response in
 	}
 	reqValues.Set("Action", action)
 	client.initCommonArgs(&reqValues)
-	signature := client.signGetRequest(&reqValues)
+
+	secretId, err := client.credential.GetSecretId()
+	if err != nil {
+		return makeClientError(err)
+	}
+	secretKey, err := client.credential.GetSecretKey()
+	if err != nil {
+		return makeClientError(err)
+	}
+
+	signature := client.signGetRequest(secretId, secretKey, &reqValues)
 	reqValues.Set("Signature", signature)
 
 	reqQuery := reqValues.Encode()
