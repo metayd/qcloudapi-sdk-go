@@ -15,7 +15,7 @@ type Client struct {
 	*common.Client
 }
 
-func NewClient(credential common.Credential, opts common.Opts) (*Client, error) {
+func NewClient(credential common.CredentialInterface, opts common.Opts) (*Client, error) {
 	if opts.Host == "" {
 		opts.Host = VpcHost
 	}
