@@ -45,7 +45,11 @@ type Opts struct {
 type CredentialInterface interface {
 	GetSecretId() (string, error)
 	GetSecretKey() (string, error)
+
+	Values() (CredentialValues, error)
 }
+
+type CredentialValues map[string]string
 
 type Credential struct {
 	SecretId  string
@@ -58,6 +62,10 @@ func (cred Credential) GetSecretId() (string, error) {
 
 func (cred Credential) GetSecretKey() (string, error) {
 	return cred.SecretKey, nil
+}
+
+func (cred Credential) Values() (CredentialValues, error) {
+	return CredentialValues{}, nil
 }
 
 func NewClient(credential CredentialInterface, opts Opts) (*Client, error) {
@@ -123,7 +131,17 @@ func (client *Client) signGetRequest(secretId, secretKey string, values *url.Val
 
 func (client *Client) InvokeWithGET(action string, args interface{}, response interface{}) error {
 	reqValues := url.Values{}
-	err := EncodeStruct(args, &reqValues)
+
+	credValues, err := client.credential.Values()
+	if err != nil {
+		return makeClientError(err)
+	}
+
+	for k, v := range credValues {
+		reqValues.Set(k, v)
+	}
+
+	err = EncodeStruct(args, &reqValues)
 	if err != nil {
 		return makeClientError(err)
 	}
