@@ -18,7 +18,7 @@ import (
 )
 
 const (
-	RequestMethodGET  = "GET"
+	RequestMethodGET = "GET"
 	RequestMethodPOST = "POST"
 
 	SignatureMethodHMacSha256 = "HmacSHA256"
@@ -39,7 +39,7 @@ type Opts struct {
 	SignatureMethod string
 	Schema          string
 
-	Logger *logrus.Logger
+	Logger          *logrus.Logger
 }
 
 type Credential struct {
@@ -141,7 +141,7 @@ func (client *Client) InvokeWithGET(action string, args interface{}, response in
 		return makeClientError(err)
 	}
 
-	client.opts.Logger.WithField("Action", action).Debugf(
+	client.opts.Logger.WithField("Action", action).Infof(
 		"%s %s %d %s", "GET", req.URL, resp.StatusCode, body,
 	)
 
