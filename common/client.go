@@ -18,7 +18,7 @@ import (
 )
 
 const (
-	RequestMethodGET = "GET"
+	RequestMethodGET  = "GET"
 	RequestMethodPOST = "POST"
 
 	SignatureMethodHMacSha256 = "HmacSHA256"
@@ -39,7 +39,7 @@ type Opts struct {
 	SignatureMethod string
 	Schema          string
 
-	Logger          *logrus.Logger
+	Logger *logrus.Logger
 }
 
 type CredentialInterface interface {

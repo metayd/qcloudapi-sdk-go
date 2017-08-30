@@ -5,13 +5,13 @@ import (
 	"time"
 )
 
-func (client *Client)CreateCbsStorageTask(args *CreateCbsStorageArgs) ([]string, error) {
+func (client *Client) CreateCbsStorageTask(args *CreateCbsStorageArgs) ([]string, error) {
 	storageIds, err := client.CreateCbsStorage(args)
 	if err != nil {
 		return nil, err
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second * 180)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*180)
 	defer cancel()
 	ticker := time.NewTicker(TaskCheckInterval)
 	defer ticker.Stop()
@@ -22,7 +22,7 @@ func (client *Client)CreateCbsStorageTask(args *CreateCbsStorageArgs) ([]string,
 			return nil, ctx.Err()
 		case <-ticker.C:
 			args := DescribeCbsStorageArgs{
-				StorageIds:&storageIds,
+				StorageIds: &storageIds,
 			}
 			response, err := client.DescribeCbsStorage(&args)
 			if err == nil && len(response.StorageSet) == len(storageIds) {
@@ -32,7 +32,7 @@ func (client *Client)CreateCbsStorageTask(args *CreateCbsStorageArgs) ([]string,
 	}
 }
 
-func (client *Client)AttachCbsStorageTask(storageId string, uInstanceId string) (error) {
+func (client *Client) AttachCbsStorageTask(storageId string, uInstanceId string) error {
 
 	return WaitUntilDone(
 		func() (string, error) {
@@ -42,14 +42,14 @@ func (client *Client)AttachCbsStorageTask(storageId string, uInstanceId string) 
 			}
 			return storageId, nil
 		},
-		func(info *StorageSet) (bool) {
+		func(info *StorageSet) bool {
 			return info.Attached == 1
 		},
 		client,
 	)
 }
 
-func (client *Client)DetachCbsStorageTask(storageId string) (error) {
+func (client *Client) DetachCbsStorageTask(storageId string) error {
 
 	return WaitUntilDone(
 		func() (string, error) {
@@ -59,11 +59,9 @@ func (client *Client)DetachCbsStorageTask(storageId string) (error) {
 			}
 			return storageId, nil
 		},
-		func(info *StorageSet) (bool) {
+		func(info *StorageSet) bool {
 			return info.Attached == 0
 		},
 		client,
 	)
 }
-
-

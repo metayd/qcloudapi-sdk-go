@@ -11,12 +11,12 @@ func TestCreateStorage(t *testing.T) {
 	}
 
 	args := &CreateCbsStorageArgs{
-		StorageType:StorageTypeCloudBasic,
-		StorageSize:10,
-		PayMode:PayModePrePay,
-		Period:1,
-		GoodsNum:1,
-		Zone:"ap-guangzhou-2",
+		StorageType: StorageTypeCloudBasic,
+		StorageSize: 10,
+		PayMode:     PayModePrePay,
+		Period:      1,
+		GoodsNum:    1,
+		Zone:        "ap-guangzhou-2",
 	}
 
 	storageIds, err := client.CreateCbsStorageTask(args)

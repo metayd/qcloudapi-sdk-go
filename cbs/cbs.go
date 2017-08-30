@@ -3,18 +3,18 @@ package cbs
 import ()
 
 const (
-	PayModePrePay = "prePay"
-	StorageTypeCloudBasic = "cloudBasic"
+	PayModePrePay           = "prePay"
+	StorageTypeCloudBasic   = "cloudBasic"
 	StorageTypeCloudPremium = "cloudPremium"
-	StorageTypeCloudSSD = "cloudSSD"
+	StorageTypeCloudSSD     = "cloudSSD"
 
 	DiskTypeRoot = "root"
 	DiskTypeData = "data"
 
 	StorageStatusNormal = "normal"
 
-	RenewFlagAutoRenew = "NOTIFY_AND_AUTO_RENEW"
-	RenewFlagManulRenew = "NOTIFY_AND_MANUAL_RENEW"
+	RenewFlagAutoRenew               = "NOTIFY_AND_AUTO_RENEW"
+	RenewFlagManulRenew              = "NOTIFY_AND_MANUAL_RENEW"
 	RenewFlagManulRenewDisableNotify = "DISABLE_NOTIFY_AND_MANUAL_RENEW"
 )
 
@@ -28,37 +28,37 @@ type DescribeCbsStorageArgs struct {
 	StorageIds   *[]string `qcloud_arg:"storageIds"`
 	UInstanceIds *[]string `qcloud_arg:"uInstanceIds"`
 
-	DiskType     *string `qcloud_arg:"diskType"`
-	Portable     *int    `qcloud_arg:"portable"`
+	DiskType *string `qcloud_arg:"diskType"`
+	Portable *int    `qcloud_arg:"portable"`
 
-	Offset       *int    `qcloud_arg:"offset"`
-	Limit        *int    `qcloud_arg:"limit"`
+	Offset *int `qcloud_arg:"offset"`
+	Limit  *int `qcloud_arg:"limit"`
 }
 
 type StorageSet struct {
 	StorageID       string `json:"storageId"`
 	UInstanceID     string `json:"uInstanceId"`
 	StorageName     string `json:"storageName"`
-	ProjectID       int `json:"projectId"`
+	ProjectID       int    `json:"projectId"`
 	DiskType        string `json:"diskType"`
 	StorageType     string `json:"storageType"`
 	StorageStatus   string `json:"storageStatus"`
-	ZoneID          int `json:"zoneId"`
+	ZoneID          int    `json:"zoneId"`
 	CreateTime      string `json:"createTime"`
-	StorageSize     int `json:"storageSize"`
-	SnapshotAbility int `json:"snapshotAbility"`
+	StorageSize     int    `json:"storageSize"`
+	SnapshotAbility int    `json:"snapshotAbility"`
 	PayMode         string `json:"payMode"`
-	Portable        int `json:"portable"`
-	Attached        int `json:"attached"`
+	Portable        int    `json:"portable"`
+	Attached        int    `json:"attached"`
 	DeadlineTime    string `json:"deadlineTime"`
-	Rollbacking     int `json:"rollbacking"`
-	RollbackPercent int `json:"rollbackPercent"`
+	Rollbacking     int    `json:"rollbacking"`
+	RollbackPercent int    `json:"rollbackPercent"`
 	Zone            string `json:"zone"`
 }
 
 type DescribeCbsStorageResponse struct {
 	Response
-	TotalCount int `json:"totalCount"`
+	TotalCount int          `json:"totalCount"`
 	StorageSet []StorageSet `json:"storageSet"`
 }
 
@@ -74,11 +74,11 @@ func (client *Client) DescribeCbsStorage(args *DescribeCbsStorageArgs) (*Describ
 type CreateCbsStorageArgs struct {
 	StorageType string `qcloud_arg:"storageType"`
 	PayMode     string `qcloud_arg:"payMode"`
-	StorageSize int `qcloud_arg:"storageSize"`
+	StorageSize int    `qcloud_arg:"storageSize"`
 
-	GoodsNum    int    `qcloud_arg:"goodsNum"`
-	Period      int    `qcloud_arg:"period"`
-	Zone        string `qcloud_arg:"zone"`
+	GoodsNum int    `qcloud_arg:"goodsNum"`
+	Period   int    `qcloud_arg:"period"`
+	Zone     string `qcloud_arg:"zone"`
 }
 
 type CreateCbsStorageResponse struct {
@@ -97,20 +97,20 @@ func (client *Client) CreateCbsStorage(args *CreateCbsStorageArgs) ([]string, er
 
 type AttachCbsStorageArgs struct {
 	StorageIds  []string `qcloud_arg:"storageIds"`
-	UInstanceId string `qcloud_arg:"uInstanceId"`
+	UInstanceId string   `qcloud_arg:"uInstanceId"`
 }
 
 type AttachCbsStorageResponse struct {
 	Response
 	Detail struct {
-			   TaskID string `json:"taskId"`
-		   } `json:"detail"`
+		TaskID string `json:"taskId"`
+	} `json:"detail"`
 }
 
 func (client *Client) AttachCbsStorage(storageIds []string, uInstanceId string) (*AttachCbsStorageResponse, error) {
 	args := AttachCbsStorageArgs{
-		StorageIds:storageIds,
-		UInstanceId:uInstanceId,
+		StorageIds:  storageIds,
+		UInstanceId: uInstanceId,
 	}
 	response := &AttachCbsStorageResponse{}
 	err := client.Invoke("AttachCbsStorages", args, response)
@@ -127,13 +127,13 @@ type DetachCbsStorageArgs struct {
 type DetachCbsStorageResponse struct {
 	Response
 	Detail struct {
-			   TaskID string `json:"taskId"`
-		   } `json:"detail"`
+		TaskID string `json:"taskId"`
+	} `json:"detail"`
 }
 
 func (client *Client) DetachCbsStorage(storageIds []string) (*DetachCbsStorageResponse, error) {
 	args := &DetachCbsStorageArgs{
-		StorageIds:storageIds,
+		StorageIds: storageIds,
 	}
 	response := &DetachCbsStorageResponse{}
 	err := client.Invoke("DetachCbsStorages", args, response)
@@ -154,7 +154,7 @@ type TerminateCbsStorageResponse struct {
 
 func (client *Client) TerminateCbsStorage(storageIds []string) (*TerminateCbsStorageResponse, error) {
 	args := &TerminateCbsStorageArgs{
-		StorageIds:storageIds,
+		StorageIds: storageIds,
 	}
 	response := &TerminateCbsStorageResponse{}
 	err := client.Invoke("TerminateCbsStorages", args, response)
@@ -166,7 +166,7 @@ func (client *Client) TerminateCbsStorage(storageIds []string) (*TerminateCbsSto
 
 type ModifyCbsRenewFlagArgs struct {
 	StorageIds []string `qcloud_arg:"storageIds"`
-	RenewFlag  string `qcloud_arg:"renewFlag"`
+	RenewFlag  string   `qcloud_arg:"renewFlag"`
 }
 
 type ModifyCbsRenewFlagResponse struct {
@@ -175,8 +175,8 @@ type ModifyCbsRenewFlagResponse struct {
 
 func (client *Client) ModifyCbsRenewFlag(storageIds []string, RenewFlag string) (*ModifyCbsRenewFlagResponse, error) {
 	args := &ModifyCbsRenewFlagArgs{
-		StorageIds:storageIds,
-		RenewFlag:RenewFlag,
+		StorageIds: storageIds,
+		RenewFlag:  RenewFlag,
 	}
 	response := &ModifyCbsRenewFlagResponse{}
 	err := client.Invoke("ModifyCbsRenewFlag", args, response)
@@ -197,8 +197,8 @@ type ModifyCbsStorageAttribute struct {
 
 func (client *Client) ModifyCbsStorageAttribute(storageId string, storageName string) (*ModifyCbsStorageAttribute, error) {
 	args := &ModifyCbsStorageAttributeArg{
-		StorageId:storageId,
-		StorageName:storageName,
+		StorageId:   storageId,
+		StorageName: storageName,
 	}
 	response := &ModifyCbsStorageAttribute{}
 	err := client.Invoke("ModifyCbsStorageAttributes", args, response)
