@@ -2,6 +2,7 @@ package cbs
 
 import (
 	"context"
+	"fmt"
 	"time"
 )
 
@@ -36,14 +37,23 @@ func (client *Client) AttachCbsStorageTask(storageId string, uInstanceId string)
 
 	return WaitUntilDone(
 		func() (string, error) {
-			_, err := client.AttachCbsStorage([]string{storageId}, uInstanceId)
+			rsp, err := client.AttachCbsStorage([]string{storageId}, uInstanceId)
 			if err != nil {
 				return "", err
 			}
+
+			subRsp, ok := rsp.Detail[storageId]
+			if ok && subRsp.Code != 0 {
+				return "", fmt.Errorf("AttachCbsStorage failed, storageId:%s, uInstanceId:%s, error:%s", storageId, uInstanceId, subRsp.Msg)
+			}
 			return storageId, nil
 		},
-		func(info *StorageSet) bool {
-			return info.Attached == 1
+		func(info *StorageSet) (bool, error) {
+			if info.Attached == 1 && info.UInstanceID != uInstanceId {
+				return false, fmt.Errorf("storage %s is attached,but uInstanceId is %s not %s", storageId,
+					info.UInstanceID, uInstanceId)
+			}
+			return info.Attached == 1 && info.UInstanceID == uInstanceId, nil
 		},
 		client,
 	)
@@ -53,14 +63,18 @@ func (client *Client) DetachCbsStorageTask(storageId string) error {
 
 	return WaitUntilDone(
 		func() (string, error) {
-			_, err := client.DetachCbsStorage([]string{storageId})
+			rsp, err := client.DetachCbsStorage([]string{storageId})
 			if err != nil {
 				return "", err
 			}
+			subRsp, ok := rsp.Detail[storageId]
+			if ok && subRsp.Code != 0 {
+				return "", fmt.Errorf("DetachCbsStorage failed, storageId:%s, error:%s", storageId, subRsp.Msg)
+			}
 			return storageId, nil
 		},
-		func(info *StorageSet) bool {
-			return info.Attached == 0
+		func(info *StorageSet) (bool, error) {
+			return info.Attached == 0, nil
 		},
 		client,
 	)
