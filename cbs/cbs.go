@@ -3,18 +3,18 @@ package cbs
 import ()
 
 const (
-	PayModePrePay           = "prePay"
-	StorageTypeCloudBasic   = "cloudBasic"
+	PayModePrePay = "prePay"
+	StorageTypeCloudBasic = "cloudBasic"
 	StorageTypeCloudPremium = "cloudPremium"
-	StorageTypeCloudSSD     = "cloudSSD"
+	StorageTypeCloudSSD = "cloudSSD"
 
 	DiskTypeRoot = "root"
 	DiskTypeData = "data"
 
 	StorageStatusNormal = "normal"
 
-	RenewFlagAutoRenew               = "NOTIFY_AND_AUTO_RENEW"
-	RenewFlagManulRenew              = "NOTIFY_AND_MANUAL_RENEW"
+	RenewFlagAutoRenew = "NOTIFY_AND_AUTO_RENEW"
+	RenewFlagManulRenew = "NOTIFY_AND_MANUAL_RENEW"
 	RenewFlagManulRenewDisableNotify = "DISABLE_NOTIFY_AND_MANUAL_RENEW"
 )
 
@@ -28,11 +28,11 @@ type DescribeCbsStorageArgs struct {
 	StorageIds   *[]string `qcloud_arg:"storageIds"`
 	UInstanceIds *[]string `qcloud_arg:"uInstanceIds"`
 
-	DiskType *string `qcloud_arg:"diskType"`
-	Portable *int    `qcloud_arg:"portable"`
+	DiskType     *string `qcloud_arg:"diskType"`
+	Portable     *int    `qcloud_arg:"portable"`
 
-	Offset *int `qcloud_arg:"offset"`
-	Limit  *int `qcloud_arg:"limit"`
+	Offset       *int `qcloud_arg:"offset"`
+	Limit        *int `qcloud_arg:"limit"`
 }
 
 type StorageSet struct {
@@ -76,9 +76,9 @@ type CreateCbsStorageArgs struct {
 	PayMode     string `qcloud_arg:"payMode"`
 	StorageSize int    `qcloud_arg:"storageSize"`
 
-	GoodsNum int    `qcloud_arg:"goodsNum"`
-	Period   int    `qcloud_arg:"period"`
-	Zone     string `qcloud_arg:"zone"`
+	GoodsNum    int    `qcloud_arg:"goodsNum"`
+	Period      int    `qcloud_arg:"period"`
+	Zone        string `qcloud_arg:"zone"`
 }
 
 type CreateCbsStorageResponse struct {
@@ -102,9 +102,12 @@ type AttachCbsStorageArgs struct {
 
 type AttachCbsStorageResponse struct {
 	Response
-	Detail struct {
-		TaskID string `json:"taskId"`
-	} `json:"detail"`
+	Detail map[string]SubAttachDetachTask `json:"detail"`
+}
+
+type SubAttachDetachTask struct {
+	Code int           `json:"code"`
+	Msg  string        `json:"msg"`
 }
 
 func (client *Client) AttachCbsStorage(storageIds []string, uInstanceId string) (*AttachCbsStorageResponse, error) {
@@ -126,9 +129,8 @@ type DetachCbsStorageArgs struct {
 
 type DetachCbsStorageResponse struct {
 	Response
-	Detail struct {
-		TaskID string `json:"taskId"`
-	} `json:"detail"`
+	Detail map[string]SubAttachDetachTask `json:"detail"`
+
 }
 
 func (client *Client) DetachCbsStorage(storageIds []string) (*DetachCbsStorageResponse, error) {
