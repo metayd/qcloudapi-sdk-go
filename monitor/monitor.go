@@ -17,7 +17,7 @@ type QCloudMonitorAPITime struct {
 	time.Time
 }
 
-func (qmat QCloudMonitorAPITime) MarshalJSON() ([]byte, error) {
+func (qmat *QCloudMonitorAPITime) MarshalJSON() ([]byte, error) {
 
 	return []byte(
 		fmt.Sprintf(
@@ -31,7 +31,7 @@ func (qmat QCloudMonitorAPITime) MarshalJSON() ([]byte, error) {
 	), nil
 }
 
-func (qmat QCloudMonitorAPITime) UnmarshalJSON(b []byte) error {
+func (qmat *QCloudMonitorAPITime) UnmarshalJSON(b []byte) error {
 	var tmp string
 	if err := json.Unmarshal(b, &tmp); err != nil {
 		return nil
@@ -41,7 +41,7 @@ func (qmat QCloudMonitorAPITime) UnmarshalJSON(b []byte) error {
 	if err != nil {
 		return err
 	}
-	qmat = QCloudMonitorAPITime{t}
+	qmat.Time = t
 
 	return nil
 }
