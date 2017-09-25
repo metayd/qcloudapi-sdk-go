@@ -8,12 +8,23 @@ import (
 	"strings"
 )
 
+type QCloudArg interface {
+	EncodeStructWithPrefix(prefix string, val reflect.Value, v *url.Values) error
+}
+
 func EncodeStruct(i interface{}, v *url.Values) error {
 	val := reflect.ValueOf(i)
 	return encodeStructWithPrefix("", val, v)
 }
 
 func encodeStructWithPrefix(prefix string, val reflect.Value, v *url.Values) error {
+	if !reflect.Indirect(val).IsValid() {
+		val = reflect.New(val.Type().Elem())
+	}
+	qcloudArg, ok := val.Interface().(QCloudArg)
+	if ok {
+		return qcloudArg.EncodeStructWithPrefix(prefix, val, v)
+	}
 	switch val.Kind() {
 	case reflect.Struct:
 		{

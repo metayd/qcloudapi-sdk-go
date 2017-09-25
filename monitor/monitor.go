@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"time"
 	"encoding/json"
+	"net/url"
+	"reflect"
+	"strings"
 )
 
 const (
@@ -15,6 +18,12 @@ const (
 
 type QCloudMonitorAPITime struct {
 	time.Time
+}
+
+func (qmat *QCloudMonitorAPITime) EncodeStructWithPrefix(prefix string, val reflect.Value, v *url.Values) error {
+	ret := fmt.Sprintf("%d-%d-%d %d:%d:%d", qmat.Year(), qmat.Month(), qmat.Day(), qmat.Hour(), qmat.Minute(), qmat.Second())
+	v.Set(strings.TrimLeft(prefix, "."), ret)
+	return nil
 }
 
 func (qmat *QCloudMonitorAPITime) MarshalJSON() ([]byte, error) {
