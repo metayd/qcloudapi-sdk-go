@@ -1,12 +1,12 @@
 package monitor
 
 import (
-	"encoding/json"
 	"fmt"
+	"time"
+	"encoding/json"
 	"net/url"
 	"reflect"
 	"strings"
-	"time"
 )
 
 const (
@@ -79,7 +79,7 @@ type GetMonitorDataResponse struct {
 	StartTime  QCloudMonitorAPITime `json:"startTime"`
 	EndTime    QCloudMonitorAPITime `json:"endTime"`
 	MetricName string               `json:"metricName"`
-	Period     string               `json:"period"`
+	Period     int                  `json:"period"`
 	DataPoints []float64            `json:"dataPoints"`
 }
 
@@ -100,7 +100,7 @@ type BatchGetMonitorDataResponse struct {
 	StartTime  QCloudMonitorAPITime `json:"startTime"`
 	EndTime    QCloudMonitorAPITime `json:"endTime"`
 	MetricName string               `json:"metricName"`
-	Period     string               `json:"period"`
+	Period     int                  `json:"period"`
 	DataPoints map[string][]float64 `json:"dataPoints"`
 }
 
