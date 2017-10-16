@@ -24,6 +24,7 @@ const (
 	PRIVATE_IPV4 = "local-ipv4"
 	REGION       = "placement/region"
 	ZONE         = "placement/zone"
+	PUBLIC_IPV4  = "public-ipv4"
 )
 
 type IMetaDataClient interface {
@@ -75,6 +76,15 @@ func (m *MetaData) Mac() (string, error) {
 func (m *MetaData) PrivateIPv4() (string, error) {
 
 	ip, err := m.c.Resource(PRIVATE_IPV4).Go()
+	if err != nil {
+		return "", err
+	}
+	return ip, nil
+}
+
+func (m *MetaData) PublicIPv4() (string, error) {
+
+	ip, err := m.c.Resource(PUBLIC_IPV4).Go()
 	if err != nil {
 		return "", err
 	}
