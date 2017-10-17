@@ -1,12 +1,12 @@
 package monitor
 
 import (
-	"fmt"
-	"time"
 	"encoding/json"
+	"fmt"
 	"net/url"
 	"reflect"
 	"strings"
+	"time"
 )
 
 const (

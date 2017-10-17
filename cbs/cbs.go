@@ -102,9 +102,12 @@ type AttachCbsStorageArgs struct {
 
 type AttachCbsStorageResponse struct {
 	Response
-	Detail struct {
-		TaskID string `json:"taskId"`
-	} `json:"detail"`
+	Detail map[string]SubAttachDetachTask `json:"detail"`
+}
+
+type SubAttachDetachTask struct {
+	Code int    `json:"code"`
+	Msg  string `json:"msg"`
 }
 
 func (client *Client) AttachCbsStorage(storageIds []string, uInstanceId string) (*AttachCbsStorageResponse, error) {
@@ -126,9 +129,7 @@ type DetachCbsStorageArgs struct {
 
 type DetachCbsStorageResponse struct {
 	Response
-	Detail struct {
-		TaskID string `json:"taskId"`
-	} `json:"detail"`
+	Detail map[string]SubAttachDetachTask `json:"detail"`
 }
 
 func (client *Client) DetachCbsStorage(storageIds []string) (*DetachCbsStorageResponse, error) {

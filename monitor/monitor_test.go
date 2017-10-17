@@ -33,11 +33,11 @@ func TestGetMonitorData(t *testing.T) {
 	}
 
 	getMonitorDataArgs := GetMonitorDataArgs{
-		Namespace: NameSpaceQceCvm,
+		Namespace:  NameSpaceQceCvm,
 		MetricName: CvmLanOutTraffic,
 		Dimensions: []Dimension{
 			{
-				Name: "unInstanceId",
+				Name:  "unInstanceId",
 				Value: cvmList.InstanceSet[0].InstanceID,
 			},
 		},
@@ -49,13 +49,13 @@ func TestGetMonitorData(t *testing.T) {
 	}
 
 	batchGetMonitorDataArgs := BatchGetMonitorDataArgs{
-		Namespace: NameSpaceQceCvm,
+		Namespace:  NameSpaceQceCvm,
 		MetricName: CvmLanOutTraffic,
 		Batch: []Batch{
 			{
 				Dimensions: []Dimension{
 					{
-						Name: "unInstanceId",
+						Name:  "unInstanceId",
 						Value: cvmList.InstanceSet[0].InstanceID,
 					},
 				},
@@ -68,4 +68,3 @@ func TestGetMonitorData(t *testing.T) {
 		t.Fatal(err)
 	}
 }
-

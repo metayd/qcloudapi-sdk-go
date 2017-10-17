@@ -7,7 +7,7 @@ type Response struct {
 }
 
 type BindAutoSnapshotPolicyArg struct {
-	AspId         string `qcloud_arg:"aspId"`
+	AspId         string   `qcloud_arg:"aspId"`
 	StorageIdList []string `qcloud_arg:"storageIdList"`
 }
 
@@ -17,7 +17,7 @@ type BindAutoSnapshotPolicyRsp struct {
 
 func (client *Client) BindAutoSnapshotPolicy(aspId string, storageIdList []string) (*BindAutoSnapshotPolicyRsp, error) {
 	args := &BindAutoSnapshotPolicyArg{
-		AspId:   aspId,
+		AspId:         aspId,
 		StorageIdList: storageIdList,
 	}
 	response := &BindAutoSnapshotPolicyRsp{}

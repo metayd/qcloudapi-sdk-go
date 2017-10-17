@@ -31,7 +31,11 @@ func waitStorageUntilDone(ctx context.Context, storage *Storage, check Checker) 
 			if err != nil {
 				return err
 			}
-			if check(info) {
+			ok, err := check(info)
+			if err != nil {
+				return err
+			}
+			if ok {
 				return nil
 			}
 		}
@@ -59,7 +63,7 @@ func (s Storage) GetInfo() (*StorageSet, error) {
 }
 
 type DoFunc func() (string, error)
-type Checker func(info *StorageSet) bool
+type Checker func(info *StorageSet) (bool, error)
 
 func NewStorage(storageId string, client *Client) *Storage {
 	return &Storage{
@@ -74,7 +78,7 @@ func WaitUntilDone(do DoFunc, check Checker, client *Client) error {
 		return err
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*180)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*600)
 	defer cancel()
 	return waitStorageUntilDone(ctx, NewStorage(storageId, client), check)
 }
