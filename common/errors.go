@@ -24,8 +24,8 @@ type VersionAPIError struct {
 }
 
 type apiErrorResponse struct {
-	Code    string `json:"code"`
-	Message string `json:"message"`
+	Code    string `json:"Code"`
+	Message string `json:"Message"`
 }
 
 func (vae VersionAPIError) Error() string {
