@@ -12,11 +12,10 @@ import (
 	"time"
 )
 
-type Request struct {
-}
-
 const (
 	ENDPOINT = "http://metadata.tencentyun.com/meta-data"
+
+	NOT_AVAILABLE = "not available"
 
 	INSTANCE_ID  = "instance-id"
 	UUID         = "uuid"
@@ -27,19 +26,20 @@ const (
 	PUBLIC_IPV4  = "public-ipv4"
 )
 
-type IMetaDataClient interface {
-	Resource(resource string) IMetaDataClient
-	Go() (string, error)
-	Url() (string, error)
+type MetaData struct {
+	c *MetaDataClient
 }
 
-type MetaData struct {
-	c IMetaDataClient
-}
+var (
+	EmptyError     = errors.New("Empty Response")
+	DefaultTimeout = time.Second * 3
+)
 
 func NewMetaData(client *http.Client) *MetaData {
 	if client == nil {
-		client = &http.Client{}
+		client = &http.Client{
+			Timeout: DefaultTimeout,
+		}
 	}
 	return &MetaData{
 		c: &MetaDataClient{client: client},
@@ -52,6 +52,9 @@ func (m *MetaData) UUID() (string, error) {
 	if err != nil {
 		return "", err
 	}
+	if len(uuid) == 0 {
+		return "", EmptyError
+	}
 	return uuid, err
 }
 
@@ -60,6 +63,9 @@ func (m *MetaData) InstanceID() (string, error) {
 	instanceId, err := m.c.Resource(INSTANCE_ID).Go()
 	if err != nil {
 		return "", err
+	}
+	if len(instanceId) == 0 {
+		return "", EmptyError
 	}
 	return instanceId, err
 }
@@ -70,6 +76,11 @@ func (m *MetaData) Mac() (string, error) {
 	if err != nil {
 		return "", err
 	}
+
+	if len(mac) == 0 {
+		return "", EmptyError
+	}
+
 	return mac, nil
 }
 
@@ -79,9 +90,15 @@ func (m *MetaData) PrivateIPv4() (string, error) {
 	if err != nil {
 		return "", err
 	}
+
+	if len(ip) == 0 {
+		return "", EmptyError
+	}
+
 	return ip, nil
 }
 
+//PublicIPv4可以为空
 func (m *MetaData) PublicIPv4() (string, error) {
 
 	ip, err := m.c.Resource(PUBLIC_IPV4).Go()
@@ -97,6 +114,10 @@ func (m *MetaData) Region() (string, error) {
 	if err != nil {
 		return "", err
 	}
+
+	if len(region) == 0 {
+		return "", EmptyError
+	}
 	return region, nil
 }
 
@@ -106,34 +127,28 @@ func (m *MetaData) Zone() (string, error) {
 	if err != nil {
 		return "", err
 	}
+	if len(zone) == 0 {
+		return "", EmptyError
+	}
 	return zone, nil
 }
 
-//
 type MetaDataClient struct {
 	resource string
 	client   *http.Client
 }
 
-func (m *MetaDataClient) Resource(resource string) IMetaDataClient {
+func (m *MetaDataClient) Resource(resource string) *MetaDataClient {
 	m.resource = resource
 	return m
 }
 
-func (m *MetaDataClient) Url() (string, error) {
-	if m.resource == "" {
-		return "", errors.New("the resource you want to visit must not be nil!")
-	}
-	return fmt.Sprintf("%s/%s", ENDPOINT, m.resource), nil
+func (m *MetaDataClient) Url() string {
+	return fmt.Sprintf("%s/%s", ENDPOINT, m.resource)
 }
 
 func (m *MetaDataClient) send() (string, error) {
-	u, err := m.Url()
-	if err != nil {
-		return "", err
-	}
-	requ, err := http.NewRequest(http.MethodGet, u, nil)
-
+	requ, err := http.NewRequest(http.MethodGet, m.Url(), nil)
 	if err != nil {
 		return "", err
 	}
@@ -141,28 +156,35 @@ func (m *MetaDataClient) send() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if resp.StatusCode != 200 {
-		return "", err
-	}
-	defer resp.Body.Close()
 
+	defer resp.Body.Close()
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
 	}
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("http status code %d: %s, body: %s",
+			resp.StatusCode, http.StatusText(resp.StatusCode), string(data))
+	}
+
+	if string(data) == NOT_AVAILABLE {
+		return "", fmt.Errorf("get rsp %s", NOT_AVAILABLE)
+	}
+
 	return string(data), nil
 
 }
 
 var retry = AttemptStrategy{
-	Min:   5,
+	Min:   3,
 	Total: 5 * time.Second,
 	Delay: 200 * time.Millisecond,
 }
 
-func (vpc *MetaDataClient) Go() (resu string, err error) {
+func (m *MetaDataClient) Go() (resu string, err error) {
 	for r := retry.Start(); r.Next(); {
-		resu, err = vpc.send()
+		resu, err = m.send()
 		if !shouldRetry(err) {
 			break
 		}

@@ -18,11 +18,13 @@ import (
 )
 
 const (
-	RequestMethodGET  = "GET"
+	RequestMethodGET = "GET"
 	RequestMethodPOST = "POST"
 
 	SignatureMethodHMacSha256 = "HmacSHA256"
 )
+
+var DefaultTimeout = time.Second * 3
 
 type Client struct {
 	*http.Client
@@ -39,7 +41,7 @@ type Opts struct {
 	SignatureMethod string
 	Schema          string
 
-	Logger *logrus.Logger
+	Logger          *logrus.Logger
 }
 
 type CredentialInterface interface {
@@ -82,7 +84,7 @@ func NewClient(credential CredentialInterface, opts Opts) (*Client, error) {
 		opts.Logger = logrus.New()
 	}
 	return &Client{
-		&http.Client{},
+		&http.Client{Timeout:DefaultTimeout, },
 		credential,
 		opts,
 	}, nil
