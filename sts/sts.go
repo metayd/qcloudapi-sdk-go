@@ -15,14 +15,16 @@ type AssumeRoleArgs struct {
 type AssumeRoleResponse struct {
 	Response
 	Data struct {
-		credentials struct {
-			SessionToken string `json:"sessionToken"`
-			TmpSecretId  string `json:"tmpSecretId"`
-			TmpSecretKey string `json:"tmpSecretKey"`
-		}
-		ExpiredTime int    `json:"expiredTime"`
-		Expiration  string `json:"expiration"`
+		Credentials TmpCredentials `json:"credentials"`
+		ExpiredTime int            `json:"expiredTime"`
+		Expiration  string         `json:"expiration"`
 	} `json:"data"`
+}
+
+type TmpCredentials struct {
+	SessionToken string `json:"sessionToken"`
+	TmpSecretId  string `json:"tmpSecretId"`
+	TmpSecretKey string `json:"tmpSecretKey"`
 }
 
 func (client *Client) AssumeRole(args *AssumeRoleArgs) (*AssumeRoleResponse, error) {
