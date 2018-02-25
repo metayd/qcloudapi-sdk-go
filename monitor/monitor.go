@@ -80,7 +80,7 @@ type GetMonitorDataResponse struct {
 	EndTime    QCloudMonitorAPITime `json:"endTime"`
 	MetricName string               `json:"metricName"`
 	Period     int                  `json:"period"`
-	DataPoints []float64            `json:"dataPoints"`
+	DataPoints []*float64            `json:"dataPoints"`
 }
 
 type BatchGetMonitorDataArgs struct {
@@ -101,7 +101,7 @@ type BatchGetMonitorDataResponse struct {
 	EndTime    QCloudMonitorAPITime `json:"endTime"`
 	MetricName string               `json:"metricName"`
 	Period     int                  `json:"period"`
-	DataPoints map[string][]float64 `json:"dataPoints"`
+	DataPoints map[string][]*float64 `json:"dataPoints"`
 }
 
 func (client *Client) GetMonitorData(args *GetMonitorDataArgs) (*GetMonitorDataResponse, error) {
