@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	LoadBalancerNameMaxLenth = 20
+	LoadBalancerNameMaxLenth = 50
 
 	TASK_STATE_SUCCESS = 0
 	TASK_STATE_FAILED  = 1
