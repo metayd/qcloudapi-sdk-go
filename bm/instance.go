@@ -1,8 +1,7 @@
 package bm
 
 type DescribeDeviceArgs struct {
-	VpcId       *int      `qcloud_arg:"vpcId"`
-	SubnetId    *int      `qcloud_arg:"subnetId"`
+	UniqVpcId   *string   `qcloud_arg:"unVpcId"`
 	LanIps      *[]string `qcloud_arg:"lanIps"`
 	InstanceIds *[]string `qcloud_arg:"instanceIds"`
 }
