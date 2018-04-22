@@ -80,7 +80,7 @@ type GetMonitorDataResponse struct {
 	EndTime    QCloudMonitorAPITime `json:"endTime"`
 	MetricName string               `json:"metricName"`
 	Period     int                  `json:"period"`
-	DataPoints []*float64            `json:"dataPoints"`
+	DataPoints []*float64           `json:"dataPoints"`
 }
 
 type BatchGetMonitorDataArgs struct {
@@ -97,10 +97,10 @@ type Batch struct {
 }
 
 type BatchGetMonitorDataResponse struct {
-	StartTime  QCloudMonitorAPITime `json:"startTime"`
-	EndTime    QCloudMonitorAPITime `json:"endTime"`
-	MetricName string               `json:"metricName"`
-	Period     int                  `json:"period"`
+	StartTime  QCloudMonitorAPITime  `json:"startTime"`
+	EndTime    QCloudMonitorAPITime  `json:"endTime"`
+	MetricName string                `json:"metricName"`
+	Period     int                   `json:"period"`
 	DataPoints map[string][]*float64 `json:"dataPoints"`
 }
 
@@ -118,6 +118,24 @@ func (client *Client) BatchGetMonitorData(args *BatchGetMonitorDataArgs) (*Batch
 	err := client.Invoke("GetMonitorData", args, response)
 	if err != nil {
 		return &BatchGetMonitorDataResponse{}, err
+	}
+	return response, nil
+}
+
+type SendCustomAlarmMsgArgs struct {
+	PolicyId string `qcloud_arg:"policyId"`
+	Msg      string `qcloud_arg:"msg"`
+}
+
+type SendCustomAlarmMsgResponse struct {
+	Response
+}
+
+func (client *Client) SendCustomAlarmMsg(args *SendCustomAlarmMsgArgs) (*SendCustomAlarmMsgResponse, error) {
+	response := &SendCustomAlarmMsgResponse{}
+	err := client.Invoke("SendCustomAlarmMsg", args, response)
+	if err != nil {
+		return &SendCustomAlarmMsgResponse{}, err
 	}
 	return response, nil
 }
