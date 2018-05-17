@@ -14,7 +14,7 @@ import (
 	"bufio"
 )
 
-var envMutex = &sync.Mutex{}
+var tokenMutex = &sync.Mutex{}
 
 const (
 	ENV_TOKEN_SESSION_TOKEN = "BM_CREDENTIAL_SESSION_TOKEN"
@@ -56,12 +56,10 @@ func GetTokenFromEnv() (*Token, error) {
 	expireTime := os.Getenv(ENV_TOKEN_EXPIRE_TIME)
 
 	//环境变量未设置
-	if token.SecretId == "" && token.SecretKey == "" {
+	if token.SecretId == "" || token.SecretKey == "" || expireTime == "" {
 		return nil, nil
 	}
-	if expireTime == "" {
-		return nil, nil
-	}
+
 	expiry, err := time.Parse(time.RFC3339Nano, expireTime)
 	if err != nil {
 		return nil, err
@@ -70,25 +68,6 @@ func GetTokenFromEnv() (*Token, error) {
 
 	return token, nil
 }
-
-type CamTempTokenDetail struct {
-	SessionToken string `json:"sessionToken"`
-	TmpSecretId  string `json:"tmpSecretId"`
-	TmpSecretKey string `json:"tmpSecretKey"`
-}
-
-type CamTempTokenRsq struct {
-	ExpiredTime int32              `json:"expiredTime"`
-	Expiration  string             `json:"expiration"`
-	Detail      CamTempTokenDetail `json:"credentials"`
-}
-
-type CamResponse struct {
-	Code int32       `json:"return_code"`
-	Msg  string      `json:"msg"`
-	//Data interface{} `json:"data"`
-}
-
 
 type AppConfigProperties map[string]string
 
@@ -173,6 +152,10 @@ func GetTokenFromFile(tokenFile string )(*Token, error) {
 	return token,nil 
 }
 
+type CamResponse struct {
+	Code int32       `json:"return_code"`
+	Msg  string      `json:"msg"`
+}
 //先调用接口，接口调用成功后，再从文件中获取
 func GetNewTokenFromNormService(uin,appId,region,instanceId string) (*Token, error) {
 	v := url.Values{}
@@ -205,8 +188,8 @@ func GetNewTokenFromNormService(uin,appId,region,instanceId string) (*Token, err
 }
 
 func (tokenSource *TempTokenSource) Token() (*Token, error) {
-	envMutex.Lock()
-	defer envMutex.Unlock()
+	tokenMutex.Lock()
+	defer tokenMutex.Unlock()
 	
 	//如果有永久secretId和secretKey
 	if tokenSource.SecretId != "" && tokenSource.SecretKey != "" {
