@@ -13,7 +13,6 @@ import (
 	"sort"
 	"strings"
 	"time"
-	"math/rand"
 	"github.com/sirupsen/logrus"
 )
 
