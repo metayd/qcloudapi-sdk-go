@@ -1,17 +1,17 @@
 package token
 
 import (
+	"bufio"
 	"encoding/json"
+	"errors"
 	"github.com/dbdd4us/qcloudapi-sdk-go/common"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 	"sync"
 	"time"
-	"strings"
-	"errors"
-	"bufio"
 )
 
 var tokenMutex = &sync.Mutex{}
@@ -22,15 +22,15 @@ const (
 	ENV_TOKEN_SECRET_KEY    = "BM_CREDENTIAL_SECRET_KEY"
 	ENV_TOKEN_EXPIRE_TIME   = "BM_CREDENTIAL_EXPIRE_TIME"
 
-	BM_CCS_NOMR_SERVER_URL = "http://127.0.0.1:9090/bmccs/tmpToken"
+	BM_CCS_NOMR_SERVER_URL = "http://norm.ccs.tencentyun.com:8088/bmccs/tmpToken"
 	BM_TMEP_TOKEN_PATH     = "/opt/ccs_agent/temptoken"
 	BM_METADATA_PATH       = "/etc/cpminfo"
 )
 
 type TempTokenSource struct {
-	Uin string     //用户帐号
-	AppId string 
-	Region string  
+	Uin    string //用户帐号
+	AppId  string
+	Region string
 
 	SecretId  string //永久密钥
 	SecretKey string
@@ -104,22 +104,21 @@ func ReadPropertiesFile(filename string) (AppConfigProperties, error) {
 	return config, nil
 }
 
-func GetInstanceIdFromMetadata(metadataFile string)(string,error){
-    appConfigMap, err := ReadPropertiesFile(metadataFile)
+func GetInstanceIdFromMetadata(metadataFile string) (string, error) {
+	appConfigMap, err := ReadPropertiesFile(metadataFile)
 	if err != nil {
 		return "", err
 	}
 
-	instanceId,ok := appConfigMap["instanceId"]
+	instanceId, ok := appConfigMap["instanceId"]
 	if !ok {
-		return "",errors.New("get instance from /etc/cpminfo failed")
+		return "", errors.New("get instance from /etc/cpminfo failed")
 	}
 
-	return instanceId,nil 
+	return instanceId, nil
 }
 
-
-func GetTokenFromFile(tokenFile string )(*Token, error) {
+func GetTokenFromFile(tokenFile string) (*Token, error) {
 	appConfigMap, err := ReadPropertiesFile(tokenFile)
 	if err != nil {
 		return nil, err
@@ -129,41 +128,42 @@ func GetTokenFromFile(tokenFile string )(*Token, error) {
 	token := &Token{}
 
 	if token.SecretId, ok = appConfigMap["secretId"]; !ok {
-		return nil ,errors.New("secretId not found in temptoken file")
+		return nil, errors.New("secretId not found in temptoken file")
 	}
 
 	if token.SecretKey, ok = appConfigMap["secretKey"]; !ok {
-		return nil ,errors.New("secretKey not found in temptoken file")
+		return nil, errors.New("secretKey not found in temptoken file")
 	}
 
 	if token.SessionToken, ok = appConfigMap["sessionToken"]; !ok {
-		return nil ,errors.New("sessionToken not found in temptoken file")
+		return nil, errors.New("sessionToken not found in temptoken file")
 	}
 
-	expireTime,ok :=  appConfigMap["expireTime"]
+	expireTime, ok := appConfigMap["expireTime"]
 	if !ok {
-		return nil ,errors.New("expireTime not found in temptoken file")
+		return nil, errors.New("expireTime not found in temptoken file")
 	}
 
 	if token.Expiry, err = time.Parse(time.RFC3339Nano, expireTime); err != nil {
 		return nil, err
 	}
 
-	return token,nil 
+	return token, nil
 }
 
 type CamResponse struct {
-	Code int32       `json:"return_code"`
-	Msg  string      `json:"msg"`
+	Code int32  `json:"return_code"`
+	Msg  string `json:"msg"`
 }
+
 //先调用接口，接口调用成功后，再从文件中获取
-func GetNewTokenFromNormService(uin,appId,region,instanceId string) (*Token, error) {
+func GetNewTokenFromNormService(uin, appId, region, instanceId string) (*Token, error) {
 	v := url.Values{}
-	v.Set("uin",uin)	
-	v.Set("region",region)
-	v.Set("instanceId",instanceId)
-	v.Set("appId",appId)
-	resp, err := http.PostForm(BM_CCS_NOMR_SERVER_URL,v)
+	v.Set("uin", uin)
+	v.Set("region", region)
+	v.Set("instanceId", instanceId)
+	v.Set("appId", appId)
+	resp, err := http.PostForm(BM_CCS_NOMR_SERVER_URL, v)
 
 	if err != nil {
 		return nil, err
@@ -180,7 +180,7 @@ func GetNewTokenFromNormService(uin,appId,region,instanceId string) (*Token, err
 		return nil, err
 	}
 
-	if  rsp.Code != 0 {
+	if rsp.Code != 0 {
 		return nil, errors.New(rsp.Msg)
 	}
 
@@ -190,7 +190,7 @@ func GetNewTokenFromNormService(uin,appId,region,instanceId string) (*Token, err
 func (tokenSource *TempTokenSource) Token() (*Token, error) {
 	tokenMutex.Lock()
 	defer tokenMutex.Unlock()
-	
+
 	//如果有永久secretId和secretKey
 	if tokenSource.SecretId != "" && tokenSource.SecretKey != "" {
 		token := &Token{
@@ -206,12 +206,12 @@ func (tokenSource *TempTokenSource) Token() (*Token, error) {
 	}
 
 	//调用API获取,获取成功后放入环境变量中
-	instanceId,err := GetInstanceIdFromMetadata(BM_METADATA_PATH)
+	instanceId, err := GetInstanceIdFromMetadata(BM_METADATA_PATH)
 	if err != nil {
-		return nil ,err
+		return nil, err
 	}
-	
-	if token, err = GetNewTokenFromNormService(tokenSource.Uin,tokenSource.AppId,tokenSource.Region,instanceId); err != nil {
+
+	if token, err = GetNewTokenFromNormService(tokenSource.Uin, tokenSource.AppId, tokenSource.Region, instanceId); err != nil {
 		return nil, err
 	}
 
