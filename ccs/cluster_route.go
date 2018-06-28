@@ -7,9 +7,10 @@ type Response struct {
 }
 
 type CreateClusterRouteArgs struct {
-	RouteTableName       string `qcloud_arg:"RouteTableName"`
-	DestinationCidrBlock string `qcloud_arg:"DestinationCidrBlock"`
-	GatewayIp            string `qcloud_arg:"GatewayIp"`
+	RouteTableName            string `qcloud_arg:"RouteTableName"`
+	DestinationCidrBlock      string `qcloud_arg:"DestinationCidrBlock"`
+	GatewayIp                 string `qcloud_arg:"GatewayIp"`
+	IgnoreClusterCIDRConflict int    `qcloud_arg:"IgnoreClusterCidrConflict"`
 }
 
 type CreateClusterRouteResponse struct {
