@@ -37,7 +37,7 @@ type LbListenerDetail struct {
 	HealthResponse     string `json:"healthResponse"`
 	ToaFlag            int    `json:"toaFlag"`
 	Status             int    `json:"status"`
-	AddTimestamp       string `json:"AddTimestamp"`
+	AddTimestamp       string `json:"addTimestamp"`
 }
 
 type LbListenerSetResponse struct {
