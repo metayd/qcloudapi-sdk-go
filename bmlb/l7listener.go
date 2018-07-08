@@ -274,9 +274,9 @@ func (client *Client) UnbindBmLocationInstances(req *UnbindBmLocationInstancesRe
 }
 
 type DescribeBmForwardListenerInfoRequest struct {
-	LbId        string `qcloud_arg:"loadBalancerId"`
-	SearchKey   string `qcloud_arg:"searchKey"`
-	IfGetRsInfo int    `qcloud_arg:"ifGetRsInfo"`
+	LbId        string  `qcloud_arg:"loadBalancerId"`
+	SearchKey   *string `qcloud_arg:"searchKey"`
+	IfGetRsInfo int     `qcloud_arg:"ifGetRsInfo"`
 }
 
 //获取负载均衡七层监听器详细信息，https://cloud.tencent.com/document/api/386/9284
