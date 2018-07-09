@@ -53,8 +53,9 @@ func (client *Client) QueryLbTaskResult(requestId int) (int, error) {
 }
 
 type DescribeBmLbReqest struct {
-	Name  *string   `qcloud_arg:"loadBalancerName"`
-	LbIds *[]string `qcloud_arg:"loadBalancerIds"`
+	Name    *string   `qcloud_arg:"loadBalancerName"`
+	LbIds   *[]string `qcloud_arg:"loadBalancerIds"`
+	UnVpcId *string   `qcloud_arg:"unVpcId"`
 }
 
 type BmLoadBalancerDetail struct {
