@@ -3,6 +3,7 @@ package common
 import (
 	"crypto/hmac"
 	"crypto/sha256"
+	"crypto/tls"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -32,12 +33,13 @@ type Client struct {
 }
 
 type Opts struct {
-	Method          string
-	Region          string
-	Host            string
-	Path            string
-	SignatureMethod string
-	Schema          string
+	Method             string
+	Region             string
+	Host               string
+	Path               string
+	SignatureMethod    string
+	Schema             string
+	InsecureSkipVerify bool
 
 	Logger *logrus.Logger
 }
@@ -81,8 +83,16 @@ func NewClient(credential CredentialInterface, opts Opts) (*Client, error) {
 	if opts.Logger == nil {
 		opts.Logger = logrus.New()
 	}
+
+	var tr *http.Transport
+
+	if opts.InsecureSkipVerify {
+		tr = &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}
+	} else {
+		tr = &http.Transport{}
+	}
 	return &Client{
-		&http.Client{},
+		&http.Client{Transport: tr},
 		credential,
 		opts,
 	}, nil
