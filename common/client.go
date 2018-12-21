@@ -82,7 +82,9 @@ func NewClient(credential CredentialInterface, opts Opts) (*Client, error) {
 		opts.Logger = logrus.New()
 	}
 	return &Client{
-		&http.Client{},
+		&http.Client{
+			Timeout: time.Second * 60,
+		},
 		credential,
 		opts,
 	}, nil
