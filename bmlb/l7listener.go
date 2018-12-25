@@ -307,7 +307,7 @@ type ModifyBmForwardListenerRequest struct {
 //修改负载均衡七层监听器，https://cloud.tencent.com/document/api/386/9273
 func (client *Client) ModifyBmForwardListener(req *ModifyBmForwardListenerRequest) (int, error) {
 	rsp := &LbRequestIdResponse{}
-	err := client.Invoke("ModifyBmForwardListenerRequest", req, rsp)
+	err := client.Invoke("ModifyBmForwardListener", req, rsp)
 	if err != nil {
 		return 0, err
 	}
