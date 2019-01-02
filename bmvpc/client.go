@@ -2,6 +2,7 @@ package bmvpc
 
 import (
 	"github.com/dbdd4us/qcloudapi-sdk-go/common"
+	"os"
 )
 
 const (
