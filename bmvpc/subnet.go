@@ -263,3 +263,70 @@ func (client *Client) DeleteBmContainerSubnet (req *DeleteBmSubnetRequest)( erro
 	}
 
 }
+
+
+type RegisterBatchIpRequest struct {
+	UnVpcId    string   `qcloud_arg:"unVpcId"`
+	UnSubnetId string   `qcloud_arg:"unSubnetId"`
+	IPList     []string `qcloud_arg:"ipList"`
+}
+
+//将物理机添加到子网：https://cloud.tencent.com/document/product/386/9265
+func (client *Client) RegisterBatchIp(req *RegisterBatchIpRequest) error {
+	rsp := &common.LegacyAPIError{}
+
+	err := client.Invoke("RegisterBatchIp", req, rsp)
+	if err != nil {
+		return err
+	}
+	if rsp.Code == 0 {
+		return nil
+	} else {
+		return errors.New(rsp.Message)
+	}
+}
+
+type ReturnIpsRequest struct {
+	UnVpcId string   `qcloud_arg:"unVpcId"`
+	IPList  []string `qcloud_arg:"ips"`
+}
+
+//将物理机添加到子网：https://cloud.tencent.com/document/product/386/9265
+func (client *Client) ReturnIps(req *ReturnIpsRequest) error {
+	rsp := &common.LegacyAPIError{}
+
+	err := client.Invoke("ReturnIps", req, rsp)
+	if err != nil {
+		return err
+	}
+	if rsp.Code == 0 {
+		return nil
+	} else {
+		return errors.New(rsp.Message)
+	}
+}
+
+type DescribeBmSubnetIpsRequest struct {
+	UnVpcId    string `qcloud_arg:"unVpcId"`
+	UnSubnetId string `qcloud_arg:"unSubnetId"`
+}
+
+type BmSubnetIp struct {
+	CpmSet []string `json:"cpmSet"`
+	TgSet  []string `json:"tgSet"`
+	VmSet  []string `json:"vmSet"`
+}
+
+type DescribeBmSubnetIpsResponse struct {
+	SubnetIp BmSubnetIp `json:"data"`
+}
+
+func (client *Client) DescribeBmSubnetIps(req *DescribeBmSubnetIpsRequest) ([]string, error) {
+	rsp := &DescribeBmSubnetIpsResponse{}
+
+	err := client.Invoke("DescribeBmSubnetIps", req, rsp)
+	if err != nil {
+		return []string{}, err
+	}
+	return rsp.SubnetIp.VmSet, nil
+}
