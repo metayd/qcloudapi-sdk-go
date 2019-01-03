@@ -15,11 +15,11 @@ type AssumeRoleArgs struct {
 type AssumeRoleResponse struct {
 	Response
 	Data struct {
-		credentials struct {
+		Credentials struct {
 			SessionToken string `json:"sessionToken"`
 			TmpSecretId  string `json:"tmpSecretId"`
 			TmpSecretKey string `json:"tmpSecretKey"`
-		}
+		} `json:"credentials"`
 		ExpiredTime int    `json:"expiredTime"`
 		Expiration  string `json:"expiration"`
 	} `json:"data"`
