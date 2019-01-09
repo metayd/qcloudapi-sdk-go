@@ -65,6 +65,11 @@ type VirtualPrivateCloud struct {
 	AsVpcGateway bool   `json:"AsVpcGateway"`
 }
 
+type Tag struct {
+	TagKey   string `qcloud_arg:"tagKey"`
+	TagValue string `qcloud_arg:"tagValue"`
+}
+
 type InstanceInfo struct {
 	InstanceID         string   `json:"InstanceId"`
 	InstanceType       string   `json:"InstanceType"`
@@ -86,6 +91,8 @@ type InstanceInfo struct {
 
 	CreatedTime time.Time `json:"CreatedTime"`
 	ExpiredTime time.Time `json:"ExpiredTime"`
+	
+	Tags 		    []Tag    `json:"Tags"`
 }
 
 func (client *Client) DescribeInstances(args *DescribeInstancesArgs) (*DescribeInstancesResponse, error) {
