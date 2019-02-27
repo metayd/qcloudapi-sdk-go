@@ -40,6 +40,7 @@ type Opts struct {
 	Schema          string
 
 	Logger *logrus.Logger
+	Client *http.Client
 }
 
 type CredentialInterface interface {
@@ -81,10 +82,17 @@ func NewClient(credential CredentialInterface, opts Opts) (*Client, error) {
 	if opts.Logger == nil {
 		opts.Logger = logrus.New()
 	}
+
+	var client *http.Client
+
+	if opts.Client != nil {
+		client = opts.Client
+	} else {
+		client = &http.Client{Timeout: time.Second * 60}
+	}
+
 	return &Client{
-		&http.Client{
-			Timeout: time.Second * 60,
-		},
+		client,
 		credential,
 		opts,
 	}, nil
